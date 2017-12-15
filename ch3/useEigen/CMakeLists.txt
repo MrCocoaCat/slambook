@@ -9,4 +9,4 @@ set( CMAKE_CXX_FLAGS "-O3" )
 # in osx and brew install
 #include_directories( /usr/local/Cellar/eigen/3.3.3/include/eigen3 )
 
-add_executable( eigenMatrix eigenMatrix.cpp )
+add_executable( eigenMatrix eigenMatrix.cpp hw.cpp hw.h)
