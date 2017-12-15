@@ -6,3 +6,4 @@
 #define GEOMETRY_HW_H
 
 #endif //GEOMETRY_HW_H
+void hw();

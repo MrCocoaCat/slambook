@@ -1,18 +1,18 @@
 #include <iostream>
 #include <cmath>
-using namespace std;
 
 #include <Eigen/Core>
 // Eigen 几何模块
 #include <Eigen/Geometry>
-
+#include "hw.h"
+using namespace std;
 /****************************
 * 本程序演示了 Eigen 几何模块的使用方法
 ****************************/
 
 int main ( int argc, char** argv )
 {
-    // Eigen/Geometry 模块提供了各种旋转和平移的表示
+ /*    // Eigen/Geometry 模块提供了各种旋转和平移的表示
     // 3D 旋转矩阵直接使用 Matrix3d 或 Matrix3f
     Eigen::Matrix3d rotation_matrix = Eigen::Matrix3d::Identity();
     cout<<rotation_matrix <<endl;
@@ -54,6 +54,7 @@ int main ( int argc, char** argv )
     // 四元数
     // 可以直接把AngleAxis赋值给四元数，反之亦然
     Eigen::Quaterniond q = Eigen::Quaterniond (rotation_vector);
+	//.coffs()的输出是实部在后，Quaterniond 中实部在前
     cout<<"quaternion = \n"<<q.coeffs() <<endl;   // 请注意coeffs的顺序是(x,y,z,w),w为实部，前三者为虚部
     // 也可以把旋转矩阵赋给它
     q = Eigen::Quaterniond ( rotation_matrix );
@@ -68,8 +69,9 @@ int main ( int argc, char** argv )
     cout<<"VVV\n"<<vvv<<endl;
 
     q = Eigen::Quaterniond (vvv);
-    cout<<"quaternion = \n"<<q.coeffs() <<endl;
-
+    cout<<"quaternion = \n"<<q.coeffs() <<endl; */
+	
+	hw();
 
     return 0;
 }
