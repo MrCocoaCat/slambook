@@ -24,7 +24,7 @@ int main( int argc, char** argv )
     cout<<"SO(3) from quaternion :"<<SO3_q<<endl;
     
     // 使用对数映射获得它的李代数
-    Eigen::Vector3d so3 = SO3_R.log();
+    Eigen::Vector3d so3 = SO3_R.log(); //so3 为李代数
     cout<<"so3 = "<<so3.transpose()<<endl;
     // hat 为向量到反对称矩阵
     cout<<"so3 hat=\n"<<Sophus::SO3::hat(so3)<<endl;
@@ -33,7 +33,7 @@ int main( int argc, char** argv )
     
     // 增量扰动模型的更新
     Eigen::Vector3d update_so3(1e-4, 0, 0); //假设更新量为这么多
-    Sophus::SO3 SO3_updated = Sophus::SO3::exp(update_so3)*SO3_R;
+    Sophus::SO3 SO3_updated = Sophus::SO3::exp(update_so3)*SO3_R; //左乘
     cout<<"SO3 updated = "<<SO3_updated<<endl;
     
     /********************萌萌的分割线*****************************/
