@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ceres_curve_fitting.iml" filepath="$PROJECT_DIR$/.idea/ceres_curve_fitting.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/LKFlow.iml" filepath="$PROJECT_DIR$/.idea/LKFlow.iml" />
     </modules>
   </component>
 </project>

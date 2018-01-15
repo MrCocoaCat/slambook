@@ -10,21 +10,23 @@ using namespace cv;
 /****************************************************
  * 本程序演示了如何使用2D-2D的特征匹配估计相机运动
  * **************************************************/
-
+//声明find_feature_matches 函数
 void find_feature_matches (
     const Mat& img_1, const Mat& img_2,
     std::vector<KeyPoint>& keypoints_1,
     std::vector<KeyPoint>& keypoints_2,
     std::vector< DMatch >& matches );
-
+//声明pose_estimation_2d2d函数
 void pose_estimation_2d2d (
     std::vector<KeyPoint> keypoints_1,
     std::vector<KeyPoint> keypoints_2,
     std::vector< DMatch > matches,
-    Mat& R, Mat& t );
+    Mat& R, Mat& t ); //
 
-// 像素坐标转相机归一化坐标
+// 声明pixel2cam函数 像素坐标转相机归一化坐标
 Point2d pixel2cam ( const Point2d& p, const Mat& K );
+
+
 
 int main ( int argc, char** argv )
 {
@@ -37,14 +39,14 @@ int main ( int argc, char** argv )
     Mat img_1 = imread ( argv[1], CV_LOAD_IMAGE_COLOR );
     Mat img_2 = imread ( argv[2], CV_LOAD_IMAGE_COLOR );
 
-    vector<KeyPoint> keypoints_1, keypoints_2;
-    vector<DMatch> matches;
-    find_feature_matches ( img_1, img_2, keypoints_1, keypoints_2, matches );
+    vector<KeyPoint> keypoints_1, keypoints_2; //存放特征点
+    vector<DMatch> matches; //存放匹配点
+    find_feature_matches ( img_1, img_2, keypoints_1, keypoints_2, matches ); //调用声明的函数
     cout<<"一共找到了"<<matches.size() <<"组匹配点"<<endl;
 
     //-- 估计两张图像间运动
     Mat R,t;
-    pose_estimation_2d2d ( keypoints_1, keypoints_2, matches, R, t );
+    pose_estimation_2d2d ( keypoints_1, keypoints_2, matches, R, t ); //算r t
 
     //-- 验证E=t^R*scale
     Mat t_x = ( Mat_<double> ( 3,3 ) <<
@@ -71,7 +73,7 @@ int main ( int argc, char** argv )
 void find_feature_matches ( const Mat& img_1, const Mat& img_2,
                             std::vector<KeyPoint>& keypoints_1,
                             std::vector<KeyPoint>& keypoints_2,
-                            std::vector< DMatch >& matches )
+                            std::vector< DMatch >& matches )   //实现ORB
 {
     //-- 初始化
     Mat descriptors_1, descriptors_2;
@@ -129,7 +131,7 @@ Point2d pixel2cam ( const Point2d& p, const Mat& K )
            );
 }
 
-
+//计数R,T
 void pose_estimation_2d2d ( std::vector<KeyPoint> keypoints_1,
                             std::vector<KeyPoint> keypoints_2,
                             std::vector< DMatch > matches,

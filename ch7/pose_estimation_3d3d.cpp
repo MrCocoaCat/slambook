@@ -38,7 +38,7 @@ void bundleAdjustment(
     Mat& R, Mat& t
 );
 
-// g2o edge
+// g2o edge 非线性计算IPC
 class EdgeProjectXYZRGBDPoseOnly : public g2o::BaseUnaryEdge<3, Eigen::Vector3d, g2o::VertexSE3Expmap>
 {
 public:
@@ -102,6 +102,7 @@ int main ( int argc, char** argv )
 
     vector<KeyPoint> keypoints_1, keypoints_2;
     vector<DMatch> matches;
+    //调用找特征点函数
     find_feature_matches ( img_1, img_2, keypoints_1, keypoints_2, matches );
     cout<<"一共找到了"<<matches.size() <<"组匹配点"<<endl;
 
@@ -136,6 +137,7 @@ int main ( int argc, char** argv )
 
     cout<<"calling bundle adjustment"<<endl;
 
+    //
     bundleAdjustment( pts1, pts2, R, t );
     
     // verify p1 = R*p2 + t
@@ -149,6 +151,9 @@ int main ( int argc, char** argv )
         cout<<endl;
     }
 }
+
+
+
 
 void find_feature_matches ( const Mat& img_1, const Mat& img_2,
                             std::vector<KeyPoint>& keypoints_1,

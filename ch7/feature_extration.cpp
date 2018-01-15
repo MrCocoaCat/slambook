@@ -8,7 +8,7 @@ using namespace cv;
 
 int main ( int argc, char** argv )
 {
-    if ( argc != 3 )
+    if ( argc != 3 ) //两个参数表示图片路径
     {
         cout<<"usage: feature_extraction img1 img2"<<endl;
         return 1;
@@ -20,11 +20,11 @@ int main ( int argc, char** argv )
     //-- 初始化
     std::vector<KeyPoint> keypoints_1, keypoints_2;
     Mat descriptors_1, descriptors_2;
-    Ptr<FeatureDetector> detector = ORB::create();
+    Ptr<FeatureDetector> detector = ORB::create(); //利用ORB
     Ptr<DescriptorExtractor> descriptor = ORB::create();
     // Ptr<FeatureDetector> detector = FeatureDetector::create(detector_name);
     // Ptr<DescriptorExtractor> descriptor = DescriptorExtractor::create(descriptor_name);
-    Ptr<DescriptorMatcher> matcher  = DescriptorMatcher::create ( "BruteForce-Hamming" );
+    Ptr<DescriptorMatcher> matcher  = DescriptorMatcher::create ( "BruteForce-Hamming" ); //选取汉明距离
 
     //-- 第一步:检测 Oriented FAST 角点位置
     detector->detect ( img_1,keypoints_1 );
@@ -36,7 +36,9 @@ int main ( int argc, char** argv )
 
     Mat outimg1;
     drawKeypoints( img_1, keypoints_1, outimg1, Scalar::all(-1), DrawMatchesFlags::DEFAULT );
-    imshow("ORB特征点",outimg1);
+    imshow("ORB特征点",outimg1); //显示ORB 特征点
+
+
 
     //-- 第三步:对两幅图像中的BRIEF描述子进行匹配，使用 Hamming 距离
     vector<DMatch> matches;
@@ -55,8 +57,8 @@ int main ( int argc, char** argv )
     }
     
     // 仅供娱乐的写法
-    min_dist = min_element( matches.begin(), matches.end(), [](const DMatch& m1, const DMatch& m2) {return m1.distance<m2.distance;} )->distance;
-    max_dist = max_element( matches.begin(), matches.end(), [](const DMatch& m1, const DMatch& m2) {return m1.distance<m2.distance;} )->distance;
+    //min_dist = min_element( matches.begin(), matches.end(), [](const DMatch& m1, const DMatch& m2) {return m1.distance<m2.distance;} )->distance;
+    //max_dist = max_element( matches.begin(), matches.end(), [](const DMatch& m1, const DMatch& m2) {return m1.distance<m2.distance;} )->distance;
 
     printf ( "-- Max dist : %f \n", max_dist );
     printf ( "-- Min dist : %f \n", min_dist );
