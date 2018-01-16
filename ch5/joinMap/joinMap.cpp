@@ -50,7 +50,7 @@ int main( int argc, char** argv )
 
     // 定义点云使用的格式：这里用的是XYZRGB
     typedef pcl::PointXYZRGB PointT;
-    typedef pcl::PointCloud<PointT> PointCloud;
+    typedef pcl::PointCloud<PointT> PointCloud; //PointCloud 内的数据类型为PointT
 
     // 新建一个点云
     PointCloud::Ptr pointCloud( new PointCloud );
@@ -83,7 +83,7 @@ int main( int argc, char** argv )
     }
 
     pointCloud->is_dense = false;
-    cout<<"点云共有"<<pointCloud->size()<<"个点."<<endl;
+    cout<< "点云共有" << pointCloud->size() << "个点." <<endl;
     pcl::io::savePCDFileBinary("map.pcd", *pointCloud );
     return 0;
 }
