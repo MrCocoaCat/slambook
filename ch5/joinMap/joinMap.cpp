@@ -32,10 +32,13 @@ int main( int argc, char** argv )
         {
             fin>>d;
         }
+        //四元数
         Eigen::Quaterniond q( data[6], data[3], data[4], data[5] );
+        //Isometry3d 4*4 欧式变换矩阵
         Eigen::Isometry3d T(q);
+        //平移
         T.pretranslate( Eigen::Vector3d( data[0], data[1], data[2] ));
-        poses.push_back( T );
+        poses.push_back( T );//压入管理
     }
 
     // 计算点云并拼接
@@ -59,19 +62,25 @@ int main( int argc, char** argv )
         cout<<"转换图像中: "<<i+1<<endl;
         cv::Mat color = colorImgs[i];
         cv::Mat depth = depthImgs[i];
+        //Isometry3d 4*4 欧式变换矩阵
         Eigen::Isometry3d T = poses[i];
         for ( int v=0; v<color.rows; v++ )
+        {
             for ( int u=0; u<color.cols; u++ )
             {
                 unsigned int d = depth.ptr<unsigned short> ( v )[u]; // 深度值
                 if ( d==0 ) continue; // 为0表示没有测量到
+                //Vector3d 为3*1矩阵 欧拉角
                 Eigen::Vector3d point;
                 point[2] = double(d)/depthScale;
                 point[0] = (u-cx)*point[2]/fx;
                 point[1] = (v-cy)*point[2]/fy;
+                //Vector3d 为3*1矩阵 欧拉角
                 Eigen::Vector3d pointWorld = T*point;
 
-                PointT p ;
+                //PointXYZRGB 变量
+                //PointT p ;
+                pcl::PointXYZRGB p;
                 p.x = pointWorld[0];
                 p.y = pointWorld[1];
                 p.z = pointWorld[2];
@@ -80,6 +89,7 @@ int main( int argc, char** argv )
                 p.r = color.data[ v*color.step+u*color.channels()+2 ];
                 pointCloud->points.push_back( p );
             }
+          }
     }
 
     pointCloud->is_dense = false;
