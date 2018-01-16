@@ -24,7 +24,7 @@
 
 namespace myslam 
 {
-class Config
+class Config //提供参数
 {
 private:
     static std::shared_ptr<Config> config_; 

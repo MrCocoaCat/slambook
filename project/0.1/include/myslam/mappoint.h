@@ -24,7 +24,7 @@ namespace myslam
 {
     
 class Frame;
-class MapPoint
+class MapPoint //特征点,路标点
 {
 public:
     typedef shared_ptr<MapPoint> Ptr;

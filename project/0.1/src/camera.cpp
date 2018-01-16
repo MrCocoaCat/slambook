@@ -25,12 +25,12 @@ namespace myslam
 Camera::Camera()
 {
 }
-
+//世界坐标系到相机坐标系
 Vector3d Camera::world2camera ( const Vector3d& p_w, const SE3& T_c_w )
 {
     return T_c_w*p_w;
 }
-
+//相机坐标系到世界坐标系
 Vector3d Camera::camera2world ( const Vector3d& p_c, const SE3& T_c_w )
 {
     return T_c_w.inverse() *p_c;

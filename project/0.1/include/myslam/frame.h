@@ -28,7 +28,8 @@ namespace myslam
     
 // forward declare 
 class MapPoint;
-class Frame
+
+class Frame //帧
 {
 public:
     typedef std::shared_ptr<Frame> Ptr;

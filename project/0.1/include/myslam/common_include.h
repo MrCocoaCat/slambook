@@ -22,6 +22,7 @@
 #define COMMON_INCLUDE_H
 
 // define the commonly included file to avoid a long include list
+//定义了一些常用的头文件
 // for Eigen
 #include <Eigen/Core>
 #include <Eigen/Geometry>

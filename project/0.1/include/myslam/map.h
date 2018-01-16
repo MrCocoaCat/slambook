@@ -26,7 +26,7 @@
 
 namespace myslam
 {
-class Map
+class Map //管理特征点
 {
 public:
     typedef shared_ptr<Map> Ptr;
