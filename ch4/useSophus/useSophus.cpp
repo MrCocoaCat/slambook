@@ -40,6 +40,7 @@ int main( int argc, char** argv )
     cout<<"************我是分割线*************"<<endl;
     // 对SE(3)操作大同小异
     Eigen::Vector3d t(1,0,0);           // 沿X轴平移1
+    //通过旋转矩阵,和位移t定义
     Sophus::SE3 SE3_Rt(R, t);           // 从R,t构造SE(3)
     Sophus::SE3 SE3_qt(q,t);            // 从q,t构造SE(3)
     cout<<"SE3 from R,t= "<<endl<<SE3_Rt<<endl;
