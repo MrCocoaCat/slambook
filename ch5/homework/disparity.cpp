@@ -42,22 +42,20 @@ int main(int argc, char **argv)
     {
         for (int u = 0; u < left.cols; u++)
         {
-
+            //mat.at q
             Vector4d point(0, 0, 0, left.at<uchar>(v, u) / 255.0); // 前三维为xyz,第四维为颜色
 
             // start your code here (~6 lines)
             // 根据双目模型计算 point 的位置
 
-        //   unsigned int d = depth.ptr<unsigned short> ( v )[u]; // 深度值
-        // if ( d==0 ) continue; // 为0表示没有测量到
+           //   unsigned int d = depth.ptr<unsigned short> ( v )[u]; // 深度值
+           // if ( d==0 ) continue; // 为0表示没有测量到
 
-            point[2] =0; //z
-
+            point[2] =d/1000; //z
             point[0] = (v-cx)*point[2]/fx; //x
-
             point[1] = (u-cy)*point[2]/fy; //y
 
-           // pointcloud.push_back(point);
+            pointcloud.push_back(point);
 
 
 
