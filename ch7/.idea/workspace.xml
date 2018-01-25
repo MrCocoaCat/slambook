@@ -2,7 +2,11 @@
 <project version="4">
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true" buildAllGenerated="true">
     <generated>
-      <config projectName="visualizeGeometry" targetName="visualizeGeometry" />
+      <config projectName="vo1" targetName="pose_estimation_3d3d" />
+      <config projectName="vo1" targetName="pose_estimation_3d2d" />
+      <config projectName="vo1" targetName="triangulation" />
+      <config projectName="vo1" targetName="feature_extraction" />
+      <config projectName="vo1" targetName="pose_estimation_2d2d" />
     </generated>
   </component>
   <component name="CMakeSettings">
@@ -11,7 +15,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9c573877-6df4-48bc-b148-d1eeabccf183" name="Default" comment="" />
+    <list default="true" id="480caef3-bb72-435a-81ef-5c6456219c39" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -22,12 +26,32 @@
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="visualizeGeometry.cpp" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/visualizeGeometry.cpp">
+    <leaf>
+      <file leaf-file-name="CMakeLists.txt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-891">
-              <caret line="73" column="29" lean-forward="false" selection-start-line="73" selection-start-column="29" selection-end-line="73" selection-end-column="29" />
+            <state relative-caret-position="-150">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="feature_extration.cpp" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/feature_extration.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="519">
+              <caret line="45" column="79" lean-forward="false" selection-start-line="45" selection-start-column="79" selection-end-line="45" selection-end-column="79" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="features2d.hpp" pinned="false" current-in-tab="false">
+        <entry file="file:///usr/local/include/opencv2/features2d.hpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-455">
+              <caret line="153" column="37" lean-forward="false" selection-start-line="153" selection-start-column="37" selection-end-line="153" selection-end-column="37" />
               <folding />
             </state>
           </provider>
@@ -35,17 +59,25 @@
       </file>
     </leaf>
   </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/feature_extration.cpp" />
+      </list>
+    </option>
+  </component>
   <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
   <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
   <component name="JsGulpfileManager">
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="330" />
-    <option name="y" value="149" />
-    <option name="width" value="1355" />
-    <option name="height" value="808" />
+  <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="482" />
+    <option name="y" value="295" />
+    <option name="width" value="1351" />
+    <option name="height" value="909" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -66,8 +98,8 @@
         <subPane>
           <expand>
             <path>
-              <item name="visualizeGeometry" type="dad4c3:CidrFilesViewHelper$MyProjectTreeStructure$1" />
-              <item name="visualizeGeometry" type="462c0819:PsiDirectoryNode" />
+              <item name="vo1" type="dad4c3:CidrFilesViewHelper$MyProjectTreeStructure$1" />
+              <item name="ch7" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -90,16 +122,32 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.visualizeGeometry">
-    <configuration name="Build All" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" EXPLICIT_BUILD_TARGET_NAME="all">
+  <component name="RunManager" selected="Application.feature_extraction">
+    <configuration name="Build All" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="vo1" RUN_TARGET_NAME="feature_extraction" EXPLICIT_BUILD_TARGET_NAME="all">
       <envs />
     </configuration>
-    <configuration name="visualizeGeometry" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="visualizeGeometry" TARGET_NAME="visualizeGeometry" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="visualizeGeometry" RUN_TARGET_NAME="visualizeGeometry">
+    <configuration name="feature_extraction" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="vo1" TARGET_NAME="feature_extraction" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="vo1" RUN_TARGET_NAME="feature_extraction">
       <envs />
     </configuration>
-    <list size="2">
+    <configuration name="pose_estimation_2d2d" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="vo1" TARGET_NAME="pose_estimation_2d2d" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="vo1" RUN_TARGET_NAME="pose_estimation_2d2d">
+      <envs />
+    </configuration>
+    <configuration name="pose_estimation_3d2d" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="vo1" TARGET_NAME="pose_estimation_3d2d" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="vo1" RUN_TARGET_NAME="pose_estimation_3d2d">
+      <envs />
+    </configuration>
+    <configuration name="pose_estimation_3d3d" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="vo1" TARGET_NAME="pose_estimation_3d3d" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="vo1" RUN_TARGET_NAME="pose_estimation_3d3d">
+      <envs />
+    </configuration>
+    <configuration name="triangulation" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="vo1" TARGET_NAME="triangulation" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="vo1" RUN_TARGET_NAME="triangulation">
+      <envs />
+    </configuration>
+    <list size="6">
       <item index="0" class="java.lang.String" itemvalue="Application.Build All" />
-      <item index="1" class="java.lang.String" itemvalue="Application.visualizeGeometry" />
+      <item index="1" class="java.lang.String" itemvalue="Application.feature_extraction" />
+      <item index="2" class="java.lang.String" itemvalue="Application.pose_estimation_2d2d" />
+      <item index="3" class="java.lang.String" itemvalue="Application.pose_estimation_3d2d" />
+      <item index="4" class="java.lang.String" itemvalue="Application.pose_estimation_3d3d" />
+      <item index="5" class="java.lang.String" itemvalue="Application.triangulation" />
     </list>
   </component>
   <component name="ShelveChangesManager" show_recycled="false">
@@ -110,33 +158,30 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="9c573877-6df4-48bc-b148-d1eeabccf183" name="Default" comment="" />
-      <created>1513321055578</created>
+      <changelist id="480caef3-bb72-435a-81ef-5c6456219c39" name="Default" comment="" />
+      <created>1516880936444</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1513321055578</updated>
-      <workItem from="1513321056846" duration="604000" />
-      <workItem from="1513490631578" duration="46000" />
-      <workItem from="1513490678373" duration="111000" />
-      <workItem from="1516600143678" duration="135000" />
+      <updated>1516880936444</updated>
+      <workItem from="1516880938219" duration="2130000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="896000" />
+    <option name="totallyTimeSpent" value="2130000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="330" y="149" width="1355" height="808" extended-state="0" />
+    <frame x="65" y="-4" width="1855" height="1084" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23123123" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13155022" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.40243903" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19957082" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -159,34 +204,26 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/visualizeGeometry.cpp">
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
+        <state relative-caret-position="-150">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/visualizeGeometry.cpp">
+    <entry file="file:///usr/local/include/opencv2/features2d.hpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="-455">
+          <caret line="153" column="37" lean-forward="false" selection-start-line="153" selection-start-column="37" selection-end-line="153" selection-end-column="37" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/visualizeGeometry.cpp">
+    <entry file="file://$PROJECT_DIR$/feature_extration.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/visualizeGeometry.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-891">
-          <caret line="73" column="29" lean-forward="false" selection-start-line="73" selection-start-column="29" selection-end-line="73" selection-end-column="29" />
+        <state relative-caret-position="519">
+          <caret line="45" column="79" lean-forward="false" selection-start-line="45" selection-start-column="79" selection-end-line="45" selection-end-column="79" />
           <folding />
         </state>
       </provider>

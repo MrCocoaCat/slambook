@@ -29,57 +29,61 @@ int main(int argc, char **argv)
     int iterations = 100;    // 迭代次数
     double cost = 0, lastCost = 0;  // 本次迭代的cost和上一次迭代的cost
 
-    for (int iter = 0; iter < iterations; iter++)
+    for (int iter = 0; iter < iterations; iter++) //迭代 100 times
     {
 
-
+        //H
         Matrix3d H = Matrix3d::Zero();             // Hessian = J^T J in Gauss-Newton
+        //g
         Vector3d b = Vector3d::Zero();             // bias
         cost = 0;
 
-        for (int i = 0; i < N; i++)
+        for (int i = 0; i < N; i++)//N个数据点
         {
             double xi = x_data[i], yi = y_data[i];  // 第i个数据点
             // start your code here
-            double error = 0;   // 第i个数据点的计算误差
-            error = 0; // 填写计算error的表达式
-            Vector3d J; // 雅可比矩阵
-            J[0] = 0;  // de/da
-            J[1] = 0;  // de/db
-            J[2] = 0;  // de/dc
 
-            H += J * J.transpose(); // GN近似的H
+            double error = 0;   // 第i个数据点的计算误差,f(x)
+             // 填写计算error的表达式
+            error = yi - (ae * xi * xi + be * xi + ce); //@liyubo
+            Vector3d J; // 雅可比矩阵   f()的导数
+            //分别求导
+            J[0] = -exp(ae * xi * xi + be * xi + ce)*xi*xi;  // de/da
+            J[1] = -exp(ae * xi * xi + be * xi + ce)*xi;  // de/db
+            J[2] = -exp(ae * xi * xi + be * xi + ce);  // de/dc
+
+            H += J * J.transpose(); // GN近似的H,transpose求转置
             b += -error * J;
+
             // end your code here
+            cost += error * error; //本次迭代
 
-            cost += error * error;
         }
-
         // 求解线性方程 Hx=b，建议用ldlt
- 	// start your code here
+ 	    // start your code here
         Vector3d dx;
-	// end your code here
+        dx = H.ldlt().solve(b);   //ldlt Cholesky来解方程
+
+	    // end your code here
 
         if (isnan(dx[0]))
         {
             cout << "result is nan!" << endl;
             break;
         }
-
         if (iter > 0 && cost > lastCost)
         {
             // 误差增长了，说明近似的不够好
             cout << "cost: " << cost << ", last cost: " << lastCost << endl;
             break;
         }
-
         // 更新abc估计值
         ae += dx[0];
         be += dx[1];
         ce += dx[2];
 
         lastCost = cost;
-
+        cout<<"ae: "<<ae<<" be:"<<be<<" ce:"<<ce<<endl;
         cout << "total cost: " << cost << endl;
     }
 

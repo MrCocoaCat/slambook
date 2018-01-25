@@ -76,9 +76,9 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="1">
-    <option name="x" value="225" />
-    <option name="y" value="77" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="308" />
+    <option name="y" value="189" />
     <option name="width" value="1351" />
     <option name="height" value="932" />
   </component>
@@ -164,15 +164,15 @@
       <option name="presentableId" value="Default" />
       <updated>1516591773967</updated>
       <workItem from="1516591796212" duration="867000" />
-      <workItem from="1516595567461" duration="643000" />
+      <workItem from="1516595567461" duration="658000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1510000" />
+    <option name="totallyTimeSpent" value="1525000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="225" y="77" width="1351" height="932" extended-state="1" />
+    <frame x="308" y="189" width="1351" height="932" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25018504" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -249,6 +249,14 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/trajectory.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="12" lean-forward="false" selection-start-line="0" selection-start-column="12" selection-end-line="0" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/draw_trajectory.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -256,14 +264,6 @@
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/trajectory.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="12" lean-forward="false" selection-start-line="0" selection-start-column="12" selection-end-line="0" selection-end-column="12" />
-          <folding />
         </state>
       </provider>
     </entry>

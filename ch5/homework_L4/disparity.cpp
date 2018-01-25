@@ -57,8 +57,6 @@ int main(int argc, char **argv)
 
             pointcloud.push_back(point);
 
-
-
             //pointcloud.
 
             // end your code here
