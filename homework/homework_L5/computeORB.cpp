@@ -267,7 +267,6 @@ int ORB_pattern[256 * 4] = {
         7, 0, 12, -2/*mean (0.127002), correlation (0.537452)*/,
         -1, -6, 0, -11/*mean (0.127148), correlation (0.547401)*/
 };
-ls
 
 // global variables
 string first_file = "../1.png";
@@ -414,6 +413,15 @@ void computeORBDesc(const cv::Mat &image, vector<cv::KeyPoint> &keypoints, vecto
         for (int i = 0; i < 256; i++)
         {
             // START YOUR CODE HERE (~7 lines)
+
+
+
+
+
+
+
+
+            
 
             d[i] = 0;  // if kp goes outside, set d.clear()
 

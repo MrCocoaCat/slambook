@@ -14,16 +14,18 @@ include_directories( ${Pangolin_INCLUDE_DIRS} )
 find_package( OpenCV REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 
-find_package( Sophus REQUIRED )
-include_directories( ${Sophus_INCLUDE_DIRS} )
+#find_package( Sophus REQUIRED )
+#include_directories( ${Sophus_INCLUDE_DIRS} )
 
 
+set(${Sophus_INCLUDE_DIRS} /home/liyubo/liyubo/slambook/3rdparty/Sophus/build/libSophus.so)
+include_directories( /home/liyubo/liyubo/slambook/3rdparty/Sophus/ )
 
 add_executable(computeORB computeORB.cpp)
 target_link_libraries( computeORB ${Pangolin_LIBRARIES} ${OpenCV_LIBS})
 
 add_executable(E2Rt E2Rt.cpp)
-target_link_libraries( E2Rt  ${Pangolin_LIBRARIES} ${OpenCV_LIBS} ${Sophus_INCLUDE_DIRS} )
+target_link_libraries( E2Rt ${Sophus_INCLUDE_DIRS} )
 
 add_executable(GN-BA GN-BA.cpp)
-target_link_libraries( GN-BA ${Pangolin_LIBRARIES} ${OpenCV_LIBS} ${Sophus_INCLUDE_DIRS} )
+target_link_libraries( GN-BA  ${Sophus_INCLUDE_DIRS} )
