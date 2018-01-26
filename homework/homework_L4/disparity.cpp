@@ -25,6 +25,7 @@ int main(int argc, char **argv)
 
     // 内参
     double fx = 718.856, fy = 718.856, cx = 607.1928, cy = 185.2157;
+
     // 间距
     double d = 0.573;
 
@@ -48,10 +49,11 @@ int main(int argc, char **argv)
             // start your code here (~6 lines)
             // 根据双目模型计算 point 的位置
 
-           //   unsigned int d = depth.ptr<unsigned short> ( v )[u]; // 深度值
+            unsigned int di = disparity.ptr<unsigned short> (v)[u]; // 时差
            // if ( d==0 ) continue; // 为0表示没有测量到
+            // z = f *b / d
+            point[2] =fx*d/di/1000; //z ;d为间距
 
-            point[2] =d/1000; //z
             point[0] = (v-cx)*point[2]/fx; //x
             point[1] = (u-cy)*point[2]/fy; //y
 
