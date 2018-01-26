@@ -8,142 +8,6 @@
 #include <string>
 
 using namespace std;
-
-// global variables
-string first_file = "../1.png";
-string second_file = "../2.png";
-
-const double pi = 3.1415926;    // pi
-
-
-// TODO implement this function
-/**
- * compute the angle for ORB descriptor
- * @param [in] image input image
- * @param [in|out] detected keypoints
- */
-void computeAngle(const cv::Mat &image, vector<cv::KeyPoint> &keypoints);
-
-// TODO implement this function
-/**
- * compute ORB descriptor
- * @param [in] image the input image
- * @param [in] keypoints detected keypoints
- * @param [out] desc descriptor
- */
-typedef vector<bool> DescType;  // type of descriptor, 256 bools
-void computeORBDesc(const cv::Mat &image, vector<cv::KeyPoint> &keypoints, vector<DescType> &desc);
-
-// TODO implement this function
-/**
- * brute-force match two sets of descriptors
- * @param desc1 the first descriptor
- * @param desc2 the second descriptor
- * @param matches matches of two images
- */
-void bfMatch(const vector<DescType> &desc1, const vector<DescType> &desc2, vector<cv::DMatch> &matches);
-
-
-int main(int argc, char **argv)
-{
-
-    // load image
-    cv::Mat first_image = cv::imread(first_file, 0);    // load grayscale image
-    cv::Mat second_image = cv::imread(second_file, 0);  // load grayscale image
-
-    // plot the image
-    cv::imshow("first image", first_image); //显示第一个图片
-    cv::imshow("second image", second_image); //显示第二个图片
-    cv::waitKey(0);
-
-    // detect FAST keypoints using threshold=40
-    vector<cv::KeyPoint> keypoints;
-    cv::FAST(first_image, keypoints, 40); //调用FAST函数
-    cout << "keypoints: " << keypoints.size() << endl; //输出关键点个数
-
-    // compute angle for each keypoint
-    //完成函数,计数按每个特征点的角度
-    computeAngle(first_image, keypoints);
-
-    // compute ORB descriptors
-    vector<DescType> descriptors;
-
-    //完成函数,计数ORB描述子
-    computeORBDesc(first_image, keypoints, descriptors);
-
-    // plot the keypoints
-    cv::Mat image_show;
-    cv::drawKeypoints(first_image, keypoints, image_show, cv::Scalar::all(-1),
-                      cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS); //绘制关键点
-
-    cv::imshow("features", image_show); //显示
-    cv::imwrite("feat1.png", image_show);
-    cv::waitKey(0);
-
-    return 0;
-    /*****************计算第二个点***************************/
-    // we can also match descriptors between images
-    // same for the second
-    vector<cv::KeyPoint> keypoints2;
-    cv::FAST(second_image, keypoints2, 40);
-    cout << "keypoints: " << keypoints2.size() << endl;
-
-    // compute angle for each keypoint,计算角度
-    computeAngle(second_image, keypoints2);
-
-    // compute ORB descriptors,计数描述子
-    vector<DescType> descriptors2;
-    computeORBDesc(second_image, keypoints2, descriptors2);
-
-    // find matches,寻找匹配点
-    vector<cv::DMatch> matches;
-    bfMatch(descriptors, descriptors2, matches);
-    cout << "matches: " << matches.size() << endl;
-
-    // plot the matches
-    cv::drawMatches(first_image, keypoints, second_image, keypoints2, matches, image_show);
-    cv::imshow("matches", image_show);
-    cv::imwrite("matches.png", image_show);
-    cv::waitKey(0);
-
-    cout << "done." << endl;
-    return 0;
-}
-
-// -------------------------------------------------------------------------------------------------- //
-
-// compute the angle,完成旋转部分的计数
-void computeAngle(const cv::Mat &image, vector<cv::KeyPoint> &keypoints)
-{
-    int half_patch_size = 8;
-    for (auto &kp : keypoints)
-    {
-	    // START YOUR CODE HERE (~7 lines)
-        //图像宽为image.cols ,横坐标v
-        // 高为image.rows,纵坐标 u
-        float M10,M01;
-        for (int v = kp.pt.x - 8; v <kp.pt.x + 7 ; v++)
-        {
-            for (int u = kp.pt.y - 8; u <kp.pt.y + 7; u++)
-            {
-                if( v < 0 || v > image.cols || u < 0 || v > image.rows )
-                {
-                    break;
-                }
-                unsigned int d = image.ptr<unsigned short> (v)[u];
-                M10 = M10 + v * d;
-                M01 = M01 + u * d;
-            }
-        }
-        float ang = std::atan(M10/M01)*180/pi;
-        kp.angle = ang; // compute kp.angle
-
-        // END YOUR CODE HERE
-    }
-    return;
-}
-
-// -------------------------------------------------------------------------------------------------- //
 // ORB pattern
 int ORB_pattern[256 * 4] = {
         8, -3, 9, 5/*mean (0), correlation (0)*/,
@@ -403,6 +267,142 @@ int ORB_pattern[256 * 4] = {
         7, 0, 12, -2/*mean (0.127002), correlation (0.537452)*/,
         -1, -6, 0, -11/*mean (0.127148), correlation (0.547401)*/
 };
+
+// global variables
+string first_file = "../1.png";
+string second_file = "../2.png";
+
+const double pi = 3.1415926;    // pi
+
+
+// TODO implement this function
+/**
+ * compute the angle for ORB descriptor
+ * @param [in] image input image
+ * @param [in|out] detected keypoints
+ */
+void computeAngle(const cv::Mat &image, vector<cv::KeyPoint> &keypoints);
+
+// TODO implement this function
+/**
+ * compute ORB descriptor
+ * @param [in] image the input image
+ * @param [in] keypoints detected keypoints
+ * @param [out] desc descriptor
+ */
+typedef vector<bool> DescType;  // type of descriptor, 256 bools
+void computeORBDesc(const cv::Mat &image, vector<cv::KeyPoint> &keypoints, vector<DescType> &desc);
+
+// TODO implement this function
+/**
+ * brute-force match two sets of descriptors
+ * @param desc1 the first descriptor
+ * @param desc2 the second descriptor
+ * @param matches matches of two images
+ */
+void bfMatch(const vector<DescType> &desc1, const vector<DescType> &desc2, vector<cv::DMatch> &matches);
+
+
+int main(int argc, char **argv)
+{
+
+    // load image
+    cv::Mat first_image = cv::imread(first_file, 0);    // load grayscale image
+    cv::Mat second_image = cv::imread(second_file, 0);  // load grayscale image
+
+    // plot the image
+    cv::imshow("first image", first_image); //显示第一个图片
+    cv::imshow("second image", second_image); //显示第二个图片
+    cv::waitKey(0);
+
+    // detect FAST keypoints using threshold=40
+    vector<cv::KeyPoint> keypoints;
+    cv::FAST(first_image, keypoints, 40); //调用FAST函数
+    cout << "keypoints: " << keypoints.size() << endl; //输出关键点个数
+
+    // compute angle for each keypoint
+    //完成函数,计数按每个特征点的角度
+    computeAngle(first_image, keypoints);
+
+    // compute ORB descriptors
+    vector<DescType> descriptors;
+
+    //完成函数,计数ORB描述子
+    computeORBDesc(first_image, keypoints, descriptors);
+
+    // plot the keypoints
+    cv::Mat image_show;
+    cv::drawKeypoints(first_image, keypoints, image_show, cv::Scalar::all(-1),
+                      cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS); //绘制关键点
+
+    cv::imshow("features", image_show); //显示
+    cv::imwrite("feat1.png", image_show);
+    cv::waitKey(0);
+
+    return 0;
+    /*****************计算第二个点***************************/
+    // we can also match descriptors between images
+    // same for the second
+    vector<cv::KeyPoint> keypoints2;
+    cv::FAST(second_image, keypoints2, 40);
+    cout << "keypoints: " << keypoints2.size() << endl;
+
+    // compute angle for each keypoint,计算角度
+    computeAngle(second_image, keypoints2);
+
+    // compute ORB descriptors,计数描述子
+    vector<DescType> descriptors2;
+    computeORBDesc(second_image, keypoints2, descriptors2);
+
+    // find matches,寻找匹配点
+    vector<cv::DMatch> matches;
+    bfMatch(descriptors, descriptors2, matches);
+    cout << "matches: " << matches.size() << endl;
+
+    // plot the matches
+    cv::drawMatches(first_image, keypoints, second_image, keypoints2, matches, image_show);
+    cv::imshow("matches", image_show);
+    cv::imwrite("matches.png", image_show);
+    cv::waitKey(0);
+
+    cout << "done." << endl;
+    return 0;
+}
+
+// -------------------------------------------------------------------------------------------------- //
+
+// compute the angle,完成旋转部分的计数
+void computeAngle(const cv::Mat &image, vector<cv::KeyPoint> &keypoints)
+{
+    int half_patch_size = 8;
+    for (auto &kp : keypoints)
+    {
+	    // START YOUR CODE HERE (~7 lines)
+        //图像宽为image.cols ,横坐标v
+        // 高为image.rows,纵坐标 u
+        float M10,M01;
+        for (int v = kp.pt.x - 8; v <kp.pt.x + 7 ; v++)
+        {
+            for (int u = kp.pt.y - 8; u <kp.pt.y + 7; u++)
+            {
+                if( v < 0 || v > image.cols || u < 0 || v > image.rows )
+                {
+                    break;
+                }
+                unsigned int d = image.ptr<unsigned short> (v)[u];
+                M10 = M10 + v * d;
+                M01 = M01 + u * d;
+            }
+        }
+        float ang = std::atan(M10/M01)*180/pi;
+        kp.angle = ang; // compute kp.angle
+
+        // END YOUR CODE HERE
+    }
+    return;
+}
+
+// -------------------------------------------------------------------------------------------------- //
 
 // compute the descriptor
 void computeORBDesc(const cv::Mat &image, vector<cv::KeyPoint> &keypoints, vector<DescType> &desc)
