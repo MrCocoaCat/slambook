@@ -267,6 +267,7 @@ int ORB_pattern[256 * 4] = {
         7, 0, 12, -2/*mean (0.127002), correlation (0.537452)*/,
         -1, -6, 0, -11/*mean (0.127148), correlation (0.547401)*/
 };
+ls
 
 // global variables
 string first_file = "../1.png";
