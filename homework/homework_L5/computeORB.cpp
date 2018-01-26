@@ -4,6 +4,9 @@
 //
 
 #include <opencv2/opencv.hpp>
+#include <Eigen/Core>
+// 稠密矩阵的代数运算（逆，特征值等）
+ #include <Eigen/Dense>
 
 #include <string>
 
@@ -413,18 +416,55 @@ void computeORBDesc(const cv::Mat &image, vector<cv::KeyPoint> &keypoints, vecto
         for (int i = 0; i < 256; i++)
         {
             // START YOUR CODE HERE (~7 lines)
+            float  ang = kp.angle*pi/180;
+            int x,y;
+
+            Eigen::Matrix<float, 2, 2> matrix_22;
+            matrix_22<<cos(ang),-sin(ang),sin(ang),cos(ang);
+            //计算p点
+            Eigen::Matrix<float, 2, 1> matrix_p1;
+            Eigen::Matrix<float, 2, 1> matrix_p2;
+
+            matrix_p1[0] = kp.pt.x + ORB_pattern[4*i + 0];
+            matrix_p1[1] = kp.pt.y + ORB_pattern[4*i + 1];
+
+            if( matrix_p1[0] < 0 || matrix_p1[0] > image.cols || matrix_p1[1] < 0 || matrix_p1[1] > image.rows )
+            {
+                d.clear();
+                break;
+            }
+            matrix_p2 = matrix_22 * matrix_p1;
+            x = matrix_p2[0];
+            y = matrix_p2[1];
+            unsigned int Ip = image.ptr<unsigned short> (y)[x];
 
 
+            //计算q点
+            Eigen::Matrix<float, 2, 1> matrix_q1;
+            Eigen::Matrix<float, 2, 1> matrix_q2;
+
+            matrix_q1[0] = kp.pt.x + ORB_pattern[4*i + 2];
+            matrix_q1[1] = kp.pt.y + ORB_pattern[4*i + 3];
+
+            if( matrix_q1[0] < 0 || matrix_q1[0] > image.cols || matrix_q1[1] < 0 || matrix_q1[1] > image.rows )
+            {
+                d.clear();
+                break;
+            }
+            matrix_q2 = matrix_22 * matrix_q1;
+            x = matrix_q2[0];
+            y = matrix_q2[1];
+            unsigned int Iq = image.ptr<unsigned short> (y)[x];
 
 
-
-
-
-
-
-
-            d[i] = 0;  // if kp goes outside, set d.clear()
-
+            if( Ip > Iq)
+            {
+                d[i] = 0;
+            }
+            else
+            {
+                d[i] = 1;  // if kp goes outside, set d.clear()
+            }
 
 	        // END YOUR CODE HERE
         }
