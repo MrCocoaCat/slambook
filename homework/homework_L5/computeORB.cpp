@@ -315,8 +315,8 @@ int main(int argc, char **argv)
 
     // plot the image
 
-    //cv::imshow("first image", first_image); //显示第一个图片
-   // cv::imshow("second image", second_image); //显示第二个图片//cv::waitKey(0);
+    cv::imshow("first image", first_image); //显示第一个图片
+    cv::imshow("second image", second_image); //显示第二个图片//cv::waitKey(0);
 
     // detect FAST keypoints using threshold=40
     vector<cv::KeyPoint> keypoints;
@@ -334,42 +334,45 @@ int main(int argc, char **argv)
     computeORBDesc(first_image, keypoints, descriptors);
 
     // plot the keypoints
-   // cv::Mat image_show;
-   // cv::drawKeypoints(first_image, keypoints, image_show, cv::Scalar::all(-1),
-   //                   cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS); //绘制关键点
+    cv::Mat image_show;
+    cv::drawKeypoints(first_image, keypoints, image_show, cv::Scalar::all(-1),
+                      cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS); //绘制关键点
 
-   // cv::imshow("features", image_show); //显示
-  //  cv::imwrite("feat1.png", image_show);
-   // cv::waitKey(0);
+    cv::imshow("features", image_show); //显示
+    cv::imwrite("feat1.png", image_show);
+    cv::waitKey(0);
 
-    return 0;
+
     /*****************计算第二个点***************************/
-    // we can also match descriptors between images
-    // same for the second
-//    vector<cv::KeyPoint> keypoints2;
-//    cv::FAST(second_image, keypoints2, 40);
-//    cout << "keypoints: " << keypoints2.size() << endl;
-//
-//    // compute angle for each keypoint,计算角度
-//    computeAngle(second_image, keypoints2);
-//
-//    // compute ORB descriptors,计数描述子
-//    vector<DescType> descriptors2;
-//    computeORBDesc(second_image, keypoints2, descriptors2);
-//
-//    // find matches,寻找匹配点
-//    vector<cv::DMatch> matches;
-//    bfMatch(descriptors, descriptors2, matches);
-//    cout << "matches: " << matches.size() << endl;
-//
-//    // plot the matches
-//    cv::drawMatches(first_image, keypoints, second_image, keypoints2, matches, image_show);
-//    cv::imshow("matches", image_show);
-//    cv::imwrite("matches.png", image_show);
-//    cv::waitKey(0);
-//
-//    cout << "done." << endl;
-//    return 0;
+     //we can also match descriptors between images
+     //same for the second
+    vector<cv::KeyPoint> keypoints2;
+    cv::FAST(second_image, keypoints2, 40);
+    cout << "keypoints: " << keypoints2.size() << endl;
+
+    // compute angle for each keypoint,计算角度
+    computeAngle(second_image, keypoints2);
+
+    // compute ORB descriptors,计数描述子
+    vector<DescType> descriptors2;
+    computeORBDesc(second_image, keypoints2, descriptors2);
+
+    // find matches,寻找匹配点
+    vector<cv::DMatch> matches;
+
+    //完成匹配函数,传入描述子
+    bfMatch(descriptors, descriptors2, matches);
+    cout << "matches: " << matches.size() << endl;
+
+
+    // plot the matches
+    cv::drawMatches(first_image, keypoints, second_image, keypoints2, matches, image_show);
+    cv::imshow("matches", image_show);
+    cv::imwrite("matches.png", image_show);
+    cv::waitKey(0);
+
+    cout << "done." << endl;
+    return 0;
 }
 
 // -------------------------------------------------------------------------------------------------- //
@@ -397,7 +400,7 @@ void computeAngle(const cv::Mat &image, vector<cv::KeyPoint> &keypoints)
                 M01 = M01 + u * d;
             }
         }
-        float ang = std::atan(M10/M01)*180/pi;
+        float ang = atan(M10/M01)*180/pi;
         kp.angle = ang; // compute kp.angle
 
         // END YOUR CODE HERE
@@ -438,7 +441,6 @@ void computeORBDesc(const cv::Mat &image, vector<cv::KeyPoint> &keypoints, vecto
             y = matrix_p2[1];
             unsigned int Ip = image.ptr<unsigned short> (y)[x];
 
-
             //计算q点
             Eigen::Matrix<float, 2, 1> matrix_q1;
             Eigen::Matrix<float, 2, 1> matrix_q2;
@@ -456,7 +458,6 @@ void computeORBDesc(const cv::Mat &image, vector<cv::KeyPoint> &keypoints, vecto
             y = matrix_q2[1];
             unsigned int Iq = image.ptr<unsigned short> (y)[x];
 
-
             if( Ip > Iq)
             {
                 d[i] = 0;
@@ -468,7 +469,7 @@ void computeORBDesc(const cv::Mat &image, vector<cv::KeyPoint> &keypoints, vecto
 
 	        // END YOUR CODE HERE
         }
-        //压入关键点
+        //压入描述子
         desc.push_back(d);
     }
 
@@ -491,7 +492,50 @@ void bfMatch(const vector<DescType> &desc1, const vector<DescType> &desc2, vecto
 
     // START YOUR CODE HERE (~12 lines)
 
+    //DescType放描述子 ,每个描述子是256的数组
+    cv::DMatch m;
+
     // find matches between desc1 and desc2.
+
+    for(auto i = 0;i <= desc1.size();i++) //依次取第一个特征
+    {
+        if(desc1[i].empty())
+        {
+            continue;
+        }
+        m.distance = 256;
+
+        for(auto j = 0;j <= desc2.size();j++) //依次取第二个特征
+        {
+
+            if(desc2[j].empty())
+            {
+                break;
+            }
+            int iDistance = 0;
+            for(int k=0;k<256;k++)
+            {
+                if(desc1[i][k] != desc2[i][k])
+                {
+                    iDistance++;
+                }
+            }
+            //取最小值作为匹配点
+            if(iDistance < m.distance)
+            {
+                m.distance = iDistance;
+                m.imgIdx = i;
+                m.queryIdx = j;
+            }
+        }
+
+        //大于 50 则舍弃
+        if(m.distance < d_max)
+        {
+            matches.push_back(m);
+        }
+    }
+
 
     // END YOUR CODE HERE
 
