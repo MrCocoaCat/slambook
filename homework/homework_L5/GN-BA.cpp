@@ -12,7 +12,13 @@ using namespace Eigen;
 #include <iostream>
 #include <iomanip>
 
+
+#include <Eigen/Core>
+#include <Eigen/Geometry>
+
+#include "sophus/so3.h"
 #include "sophus/se3.h"
+
 
 using namespace std;
 

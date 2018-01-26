@@ -7,12 +7,17 @@
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
-using namespace Eigen;
 
-#include <sophus/so3.hpp>
+
+//#include <sophus/so3.hpp>
 
 #include <iostream>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 
+#include "sophus/so3.h"
+#include "sophus/se3.h"
+using namespace Eigen;
 using namespace std;
 
 int main(int argc, char **argv) {
@@ -43,8 +48,8 @@ int main(int argc, char **argv) {
 
     cout << "R1 = " << R1 << endl;
     cout << "R2 = " << R2 << endl;
-    cout << "t1 = " << Sophus::SO3d::vee(t_wedge1) << endl;
-    cout << "t2 = " << Sophus::SO3d::vee(t_wedge2) << endl;
+    cout << "t1 = " << Sophus::SO3::vee(t_wedge1) << endl;
+    cout << "t2 = " << Sophus::SO3::vee(t_wedge2) << endl;
 
     // check t^R=E up to scale
     Matrix3d tR = t_wedge1 * R1;
