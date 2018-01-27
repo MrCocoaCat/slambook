@@ -59,9 +59,10 @@ int main ( int argc, char** argv )
         ushort d = d1.ptr<unsigned short> (int ( keypoints_1[m.queryIdx].pt.y )) [ int ( keypoints_1[m.queryIdx].pt.x ) ];
         if ( d == 0 )   // bad depth
             continue;
-        float dd = d/1000.0;
-        
+        float dd = d/5000.0;
+        //调用计数坐标函数
         Point2d p1 = pixel2cam ( keypoints_1[m.queryIdx].pt, K );
+
         pts_3d.push_back ( Point3f ( p1.x*dd, p1.y*dd, dd ) );
         pts_2d.push_back ( keypoints_2[m.trainIdx].pt );
     }
@@ -69,8 +70,10 @@ int main ( int argc, char** argv )
     cout<<"3d-2d pairs: "<<pts_3d.size() <<endl;
 
     Mat r, t;
+
     solvePnP ( pts_3d, pts_2d, K, Mat(), r, t, false ); // 调用OpenCV 的 PnP 求解，可选择EPNP，DLS等方法
     Mat R;
+    //旋转向量到旋转矩阵
     cv::Rodrigues ( r, R ); // r为旋转向量形式，用Rodrigues公式转换为矩阵
 
     cout<<"R="<<endl<<R<<endl;

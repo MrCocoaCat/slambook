@@ -12,7 +12,7 @@
 #include <chrono>
 using namespace std; 
 
-// 曲线模型的顶点，模板参数：优化变量维度和数据类型
+//顶点 : 曲线模型的顶点，模板参数：优化变量维度和数据类型
 class CurveFittingVertex: public g2o::BaseVertex<3, Eigen::Vector3d>
 {
 public:
@@ -31,7 +31,7 @@ public:
     virtual bool write( ostream& out ) const {}
 };
 
-// 误差模型 模板参数：观测值维度，类型，连接顶点类型
+// 边: 误差模型 模板参数：观测值维度，类型，连接顶点类型,一元边
 class CurveFittingEdge: public g2o::BaseUnaryEdge<1,double,CurveFittingVertex>
 {
 public:
@@ -59,15 +59,14 @@ int main( int argc, char** argv )
     double abc[3] = {0,0,0};            // abc参数的估计值
 
     vector<double> x_data, y_data;      // 数据
-    
+
+    //生成原始数据
     cout<<"generating data: "<<endl;
     for ( int i=0; i<N; i++ )
     {
         double x = i/100.0;
         x_data.push_back ( x );
-        y_data.push_back (
-            exp ( a*x*x + b*x + c ) + rng.gaussian ( w_sigma )
-        );
+        y_data.push_back (exp ( a*x*x + b*x + c ) + rng.gaussian ( w_sigma ));
         cout<<x_data[i]<<" "<<y_data[i]<<endl;
     }
     

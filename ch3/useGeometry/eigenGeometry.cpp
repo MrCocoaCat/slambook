@@ -17,6 +17,8 @@ int main ( int argc, char** argv )
     Eigen::Matrix3d rotation_matrix = Eigen::Matrix3d::Identity();
     cout<<rotation_matrix <<endl;
     // 旋转向量使用 AngleAxis, 它底层不直接是Matrix，但运算可以当作矩阵（因为重载了运算符）
+
+
     Eigen::AngleAxisd rotation_vector ( M_PI/4, Eigen::Vector3d ( 0,0,1 ) );     //旋转向量的构造函数,沿 Z 轴旋转 45 度
     cout.precision(3); //设置输出精度为3
     cout<<"rotation matrix =\n"<<rotation_vector.matrix() <<endl;                //用matrix()转换成矩阵,旋转向量 到 旋转矩阵
