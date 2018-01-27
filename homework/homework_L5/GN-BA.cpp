@@ -41,6 +41,8 @@ int main(int argc, char **argv)
     // load points in to p3d and p2d 
     // START YOUR CODE HERE
 
+
+
     // END YOUR CODE HERE
     assert(p3d.size() == p2d.size());
 
