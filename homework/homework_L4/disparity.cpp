@@ -39,9 +39,9 @@ int main(int argc, char **argv)
 
     // TODO 根据双目模型计算点云
     // 如果你的机器慢，请把后面的v++和u++改成v+=2, u+=2
-    for (int v = 0; v < left.rows; v++)
+    for (int v = 0; v < left.rows; v++) // y
     {
-        for (int u = 0; u < left.cols; u++)
+        for (int u = 0; u < left.cols; u++) //x
         {
             //mat.at q
             Vector4d point(0, 0, 0, left.at<uchar>(v, u) / 255.0); // 前三维为xyz,第四维为颜色
@@ -49,18 +49,14 @@ int main(int argc, char **argv)
             // start your code here (~6 lines)
             // 根据双目模型计算 point 的位置
 
-            unsigned int di = disparity.ptr<unsigned short> (v)[u]; // 时差
+            unsigned short di = disparity.ptr<unsigned short> (v)[u]; // 视差图
+
            // if ( d==0 ) continue; // 为0表示没有测量到
             // z = f *b / d
-            point[2] =fx*d/di/1000; //z ;d为间距
-
-            point[0] = (v-cx)*point[2]/fx; //x
-            point[1] = (u-cy)*point[2]/fy; //y
-
+            point[2] =fx*d/di*1000; //z ;d为间距
+            point[0] = (u-cx)*point[2]/fx; //x
+            point[1] = (v-cy)*point[2]/fy; //y
             pointcloud.push_back(point);
-
-            //pointcloud.
-
             // end your code here
         }
     }

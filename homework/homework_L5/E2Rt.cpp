@@ -20,7 +20,8 @@
 using namespace Eigen;
 using namespace std;
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 
     // 给定Essential矩阵
     Matrix3d E;
@@ -33,7 +34,10 @@ int main(int argc, char **argv) {
     Vector3d t;
 
     // SVD and fix sigular values
+
     // START YOUR CODE HERE
+
+    JacobiSVD<Eigen::MatrixXf> svd(A, ComputeThinU | ComputeThinV );
 
     // END YOUR CODE HERE
 
