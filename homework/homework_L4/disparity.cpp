@@ -49,8 +49,9 @@ int main(int argc, char **argv)
             // start your code here (~6 lines)
             // 根据双目模型计算 point 的位置
         
-            unsigned char di = disparity.ptr<unsigned short> (v)[u]; // 视差图
+           // unsigned char di = disparity.ptr<unsigned short> (v)[u]; // 视差图
 
+           int di = disparity.ptr<uchar> (v)[u]; // 视差图
            // if ( d==0 ) continue; // 为0表示没有测量到
             // z = f *b / d
             point[2] =fx*d/di; //z ;d为间距
