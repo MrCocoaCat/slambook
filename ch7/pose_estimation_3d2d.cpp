@@ -23,7 +23,16 @@ void find_feature_matches (
     std::vector< DMatch >& matches );
 
 // 像素坐标转相机归一化坐标
-Point2d pixel2cam ( const Point2d& p, const Mat& K );
+
+Point2d pixel2cam ( const Point2d& p, const Mat& K )
+{
+    return Point2d
+            (
+                    ( p.x - K.at<double> ( 0,2 ) ) / K.at<double> ( 0,0 ),
+                    ( p.y - K.at<double> ( 1,2 ) ) / K.at<double> ( 1,1 )
+            );
+}
+
 
 void bundleAdjustment (
     const vector<Point3f> points_3d,
@@ -135,14 +144,6 @@ void find_feature_matches ( const Mat& img_1, const Mat& img_2,
     }
 }
 
-Point2d pixel2cam ( const Point2d& p, const Mat& K )
-{
-    return Point2d
-           (
-               ( p.x - K.at<double> ( 0,2 ) ) / K.at<double> ( 0,0 ),
-               ( p.y - K.at<double> ( 1,2 ) ) / K.at<double> ( 1,1 )
-           );
-}
 
 void bundleAdjustment (
     const vector< Point3f > points_3d,
@@ -155,31 +156,36 @@ void bundleAdjustment (
     Block::LinearSolverType* linearSolver = new g2o::LinearSolverCSparse<Block::PoseMatrixType>(); // 线性方程求解器
     Block* solver_ptr = new Block ( linearSolver );     // 矩阵块求解器
     g2o::OptimizationAlgorithmLevenberg* solver = new g2o::OptimizationAlgorithmLevenberg ( solver_ptr );
-    g2o::SparseOptimizer optimizer;
-    optimizer.setAlgorithm ( solver );
+    g2o::SparseOptimizer optimizer; //图模型
+    optimizer.setAlgorithm ( solver ); //为图模型设置求解器
 
-    // vertex
+    // vertex,声明一个顶点,待优化参数为顶点,既R
+    //VertexSE3Expmap 李代数位姿
     g2o::VertexSE3Expmap* pose = new g2o::VertexSE3Expmap(); // camera pose
     Eigen::Matrix3d R_mat;
     R_mat <<
-          R.at<double> ( 0,0 ), R.at<double> ( 0,1 ), R.at<double> ( 0,2 ),
+               R.at<double> ( 0,0 ), R.at<double> ( 0,1 ), R.at<double> ( 0,2 ),
                R.at<double> ( 1,0 ), R.at<double> ( 1,1 ), R.at<double> ( 1,2 ),
                R.at<double> ( 2,0 ), R.at<double> ( 2,1 ), R.at<double> ( 2,2 );
     pose->setId ( 0 );
+    //设置R,t
     pose->setEstimate ( g2o::SE3Quat (
                             R_mat,
                             Eigen::Vector3d ( t.at<double> ( 0,0 ), t.at<double> ( 1,0 ), t.at<double> ( 2,0 ) )
                         ) );
-    optimizer.addVertex ( pose );
+    optimizer.addVertex ( pose ); //添加一个顶点
+
+
 
     int index = 1;
-    for ( const Point3f p:points_3d )   // landmarks
+    for ( const Point3f p:points_3d )   // landmarks,添加已知3d点
     {
+        //VertexSBAPointXYZ空间点位资
         g2o::VertexSBAPointXYZ* point = new g2o::VertexSBAPointXYZ();
         point->setId ( index++ );
         point->setEstimate ( Eigen::Vector3d ( p.x, p.y, p.z ) );
         point->setMarginalized ( true ); // g2o 中必须设置 marg 参见第十讲内容
-        optimizer.addVertex ( point );
+        optimizer.addVertex ( point ); //添加顶点
     }
 
     // parameter: camera intrinsics
@@ -191,23 +197,26 @@ void bundleAdjustment (
 
     // edges
     index = 1;
-    for ( const Point2f p:points_2d )
+    for ( const Point2f p:points_2d ) //待求解的2D特征点
     {
+        //EdgeProjectXYZ2UV 空间点位置
         g2o::EdgeProjectXYZ2UV* edge = new g2o::EdgeProjectXYZ2UV();
-        edge->setId ( index );
+        edge->setId (index );
         edge->setVertex ( 0, dynamic_cast<g2o::VertexSBAPointXYZ*> ( optimizer.vertex ( index ) ) );
         edge->setVertex ( 1, pose );
         edge->setMeasurement ( Eigen::Vector2d ( p.x, p.y ) );
         edge->setParameterId ( 0,0 );
         edge->setInformation ( Eigen::Matrix2d::Identity() );
-        optimizer.addEdge ( edge );
+        optimizer.addEdge ( edge ); //添加边
         index++;
     }
 
     chrono::steady_clock::time_point t1 = chrono::steady_clock::now();
+
     optimizer.setVerbose ( true );
     optimizer.initializeOptimization();
     optimizer.optimize ( 100 );
+
     chrono::steady_clock::time_point t2 = chrono::steady_clock::now();
     chrono::duration<double> time_used = chrono::duration_cast<chrono::duration<double>> ( t2-t1 );
     cout<<"optimization costs time: "<<time_used.count() <<" seconds."<<endl;

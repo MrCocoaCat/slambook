@@ -8,7 +8,7 @@
 
 using namespace std;
 
-typedef vector<Eigen::Vector2d, Eigen::aligned_allocator<Eigen::Vector2d>> VecVector2d;
+typedef vector<Eigen::Vector2d, Eigen::aligned_allocator<Eigen::Vector2d> > VecVector2d;
 
 // Camera intrinsics
 // 内参
@@ -18,7 +18,7 @@ double baseline = 0.573;
 // paths
 string left_file = "../left.png";
 string disparity_file = "../disparity.png";
-boost::format fmt_others("./%06d.png");    // other files
+boost::format fmt_others("../%06d.png");    // other files
 
 // useful typedefs
 typedef Eigen::Matrix<double, 6, 6> Matrix6d;
@@ -60,16 +60,17 @@ void DirectPoseEstimationSingleLayer(
 );
 
 // bilinear interpolation
-inline float GetPixelValue(const cv::Mat &img, float x, float y) {
+inline float GetPixelValue(const cv::Mat &img, float x, float y)
+{
     uchar *data = &img.data[int(y) * img.step + int(x)];
     float xx = x - floor(x);
     float yy = y - floor(y);
-    return float(
-            (1 - xx) * (1 - yy) * data[0] +
-            xx * (1 - yy) * data[1] +
-            (1 - xx) * yy * data[img.step] +
-            xx * yy * data[img.step + 1]
-    );
+    float temp = float( (1 - xx) * (1 - yy) * data[0] +
+                 xx * (1 - yy) * data[1] +
+                 (1 - xx) * yy * data[img.step] +
+                 xx * yy * data[img.step + 1] );
+
+    return temp;
 }
 
 int main(int argc, char **argv)
@@ -95,36 +96,48 @@ int main(int argc, char **argv)
     VecVector2d pixels_ref;
     vector<double> depth_ref;
 
-    // generate pixels in ref and load depth data
+    // generate pixels in ref and load depth data ,循环产生1000个随机数
     for (int i = 0; i < nPoints; i++)
     {
         //在范围内产生随机数
         int x = rng.uniform(boarder, left_img.cols - boarder);  // don't pick pixels close to boarder
         int y = rng.uniform(boarder, left_img.rows - boarder);  // don't pick pixels close to boarder
-        cout<<"x:"<<x<<" y:"<<y<<endl;
-        int disparity = disparity_img.at<uchar>(y, x);
+       // cout<<"x:"<<x<<" y:"<<y<<endl;
+        int disparity = disparity_img.at<uchar>(y, x); //选取视差图
+        // d = f * b/d
         double depth = fx * baseline / disparity; // you know this is disparity to depth
-        depth_ref.push_back(depth);
-        pixels_ref.push_back(Eigen::Vector2d(x, y));
+
+        depth_ref.push_back(depth); //压入深度
+        pixels_ref.push_back(Eigen::Vector2d(x, y));//压入像素坐标
     }
-    return 0;
+
     // estimates 01~05.png's pose using this information
     Sophus::SE3 T_cur_ref;
 
-    for (int i = 1; i < 6; i++) {  // 1~10
+    for (int i = 1; i < 6; i++)
+    {  // 1~10
+        cout <<fmt_others % i<<endl;
         cv::Mat img = cv::imread((fmt_others % i).str(), 0);
-        // DirectPoseEstimationSingleLayer(left_img, img, pixels_ref, depth_ref, T_cur_ref);    // first you need to test single layer
-        DirectPoseEstimationMultiLayer(left_img, img, pixels_ref, depth_ref, T_cur_ref);
+        if(img.data == NULL )
+        {
+            perror("please check your path");
+            return 0;
+        }
+         DirectPoseEstimationSingleLayer(left_img, img, pixels_ref, depth_ref, T_cur_ref);    // first you need to test single layer
+        //DirectPoseEstimationMultiLayer(left_img, img, pixels_ref, depth_ref, T_cur_ref);
     }
+    return 0;
 }
 
+//单层管瘤
 void DirectPoseEstimationSingleLayer(
-        const cv::Mat &img1,
-        const cv::Mat &img2,
-        const VecVector2d &px_ref,
-        const vector<double> depth_ref,
-        Sophus::SE3 &T21
-) {
+        const cv::Mat &img1,    //left_img
+        const cv::Mat &img2,    //img
+        const VecVector2d &px_ref, //pixels_ref 像素
+        const vector<double> depth_ref, //depth_ref 深度
+        Sophus::SE3 &T21    //T_cur_ref
+)
+{
 
     // parameters
     int half_patch_size = 4;
@@ -134,7 +147,8 @@ void DirectPoseEstimationSingleLayer(
     int nGood = 0;  // good projections
     VecVector2d goodProjection;
 
-    for (int iter = 0; iter < iterations; iter++) {
+    for (int iter = 0; iter < iterations; iter++)
+    {
         nGood = 0;
         goodProjection.clear();
 
@@ -142,7 +156,8 @@ void DirectPoseEstimationSingleLayer(
         Matrix6d H = Matrix6d::Zero();  // 6x6 Hessian
         Vector6d b = Vector6d::Zero();  // 6x1 bias
 
-        for (size_t i = 0; i < px_ref.size(); i++) {
+        for (size_t i = 0; i < px_ref.size(); i++) //遍历每个像素
+        {
 
             // compute the projection in the second image
             // TODO START YOUR CODE HERE
@@ -150,9 +165,11 @@ void DirectPoseEstimationSingleLayer(
             nGood++;
             goodProjection.push_back(Eigen::Vector2d(u, v));
 
-            // and compute error and jacobian
+            // and compute error and jacobian 遍历8*8的像素块
             for (int x = -half_patch_size; x < half_patch_size; x++)
-                for (int y = -half_patch_size; y < half_patch_size; y++) {
+            {
+                for (int y = -half_patch_size; y < half_patch_size; y++)
+                {
 
                     double error =0;
 
@@ -167,6 +184,7 @@ void DirectPoseEstimationSingleLayer(
                     cost += error * error;
                 }
             // END YOUR CODE HERE
+            }
         }
 
         // solve update and put it into estimation
@@ -177,12 +195,14 @@ void DirectPoseEstimationSingleLayer(
 
         cost /= nGood;
 
-        if (isnan(update[0])) {
+        if (isnan(update[0]))
+        {
             // sometimes occurred when we have a black or white patch and H is irreversible
             cout << "update is nan" << endl;
             break;
         }
-        if (iter > 0 && cost > lastCost) {
+        if (iter > 0 && cost > lastCost)
+        {
             cout << "cost increased: " << cost << ", " << lastCost << endl;
             break;
         }
@@ -196,11 +216,13 @@ void DirectPoseEstimationSingleLayer(
     cv::Mat img1_show, img2_show;
     cv::cvtColor(img1, img1_show, CV_GRAY2BGR);
     cv::cvtColor(img2, img2_show, CV_GRAY2BGR);
-    for (auto &px: px_ref) {
+    for (auto &px: px_ref)
+    {
         cv::rectangle(img1_show, cv::Point2f(px[0] - 2, px[1] - 2), cv::Point2f(px[0] + 2, px[1] + 2),
                       cv::Scalar(0, 250, 0));
     }
-    for (auto &px: goodProjection) {
+    for (auto &px: goodProjection)
+    {
         cv::rectangle(img2_show, cv::Point2f(px[0] - 2, px[1] - 2), cv::Point2f(px[0] + 2, px[1] + 2),
                       cv::Scalar(0, 250, 0));
     }
@@ -215,7 +237,8 @@ void DirectPoseEstimationMultiLayer(
         const VecVector2d &px_ref,
         const vector<double> depth_ref,
         Sophus::SE3 &T21
-) {
+)
+{
 
     // parameters
     int pyramids = 4;

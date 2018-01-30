@@ -13,7 +13,7 @@ using namespace Eigen;
 #include <iomanip>
 
 
-#include <Eigen/Core>
+//#include <sophus/Core>
 #include <Eigen/Geometry>
 
 #include "sophus/so3.h"
@@ -64,18 +64,29 @@ int main(int argc, char **argv)
         for (int i = 0; i < nPoints; i++)
         {
             // compute cost for p3d[I] and p2d[I]
-            // START YOUR CODE HERE 
+            // START YOUR CODE HERE
+            Vector2d ui=p2d[i];
+
+            Vector4d pii = T_esti.matrix()*Vector4d(p3d[i][0],p3d[i][1],p2d[i][2],1);
+
+
+
 
 	    // END YOUR CODE HERE
 
 	    // compute jacobian
             Matrix<double, 2, 6> J;
-            // START YOUR CODE HERE 
+            // START YOUR CODE HERE
+
+            J(0,0) = -fx/pii[2];
+
+
+
 
 	    // END YOUR CODE HERE
 
             H += J.transpose() * J;
-            //b += -J.transpose() * e;
+            b += -J.transpose() * e;
         }
 
 	// solve dx 
