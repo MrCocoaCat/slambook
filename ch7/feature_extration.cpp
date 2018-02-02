@@ -20,8 +20,8 @@ int main ( int argc, char** argv )
     //-- 初始化
     std::vector<KeyPoint> keypoints_1, keypoints_2;
     Mat descriptors_1, descriptors_2;
-    Ptr<FeatureDetector> detector = ORB::create(); //利用ORB
-    Ptr<DescriptorExtractor> descriptor = ORB::create();
+    Ptr<FeatureDetector> detector = ORB::create(); //利用ORB,定义ORB检测脚点的指针
+    Ptr<DescriptorExtractor> descriptor = ORB::create(); //定义BRIEF描述子的指针
     // Ptr<FeatureDetector> detector = FeatureDetector::create(detector_name);
     // Ptr<DescriptorExtractor> descriptor = DescriptorExtractor::create(descriptor_name);
     Ptr<DescriptorMatcher> matcher  = DescriptorMatcher::create ( "BruteForce-Hamming" ); //选取汉明距离
@@ -43,7 +43,7 @@ int main ( int argc, char** argv )
     //-- 第三步:对两幅图像中的BRIEF描述子进行匹配，使用 Hamming 距离
     vector<DMatch> matches;
     //BFMatcher matcher ( NORM_HAMMING );
-    matcher->match ( descriptors_1, descriptors_2, matches );
+    matcher->match ( descriptors_1, descriptors_2, matches );//利用汉明距离描述子matcher
 
     //-- 第四步:匹配点对筛选
     double min_dist=10000, max_dist=0;

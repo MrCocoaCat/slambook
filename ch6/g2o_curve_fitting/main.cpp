@@ -12,7 +12,7 @@
 #include <chrono>
 using namespace std; 
 
-// 曲线模型的顶点，模板参数：优化变量维度和数据类型
+//顶点 : 曲线模型的顶点，模板参数：优化变量维度和数据类型
 class CurveFittingVertex: public g2o::BaseVertex<3, Eigen::Vector3d>
 {
 public:
@@ -31,21 +31,30 @@ public:
     virtual bool write( ostream& out ) const {}
 };
 
-// 误差模型 模板参数：观测值维度，类型，连接顶点类型
+// 边: 误差模型 模板参数：观测值维度，类型，连接顶点类型,一元边
 class CurveFittingEdge: public g2o::BaseUnaryEdge<1,double,CurveFittingVertex>
 {
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    CurveFittingEdge( double x ): BaseUnaryEdge(), _x(x) {}
-    // 计算曲线模型误差
+    CurveFittingEdge( double x ): BaseUnaryEdge(), _x(x) //构造函数,传入x
+    {
+
+    }
+    // 计算曲线模型误差,
     void computeError()
     {
         const CurveFittingVertex* v = static_cast<const CurveFittingVertex*> (_vertices[0]);
         const Eigen::Vector3d abc = v->estimate();
         _error(0,0) = _measurement - std::exp( abc(0,0)*_x*_x + abc(1,0)*_x + abc(2,0) ) ;
     }
-    virtual bool read( istream& in ) {}
-    virtual bool write( ostream& out ) const {}
+    virtual bool read( istream& in )
+    {
+
+    }
+    virtual bool write( ostream& out ) const
+    {
+
+    }
 public:
     double _x;  // x 值， y 值为 _measurement
 };
@@ -59,15 +68,14 @@ int main( int argc, char** argv )
     double abc[3] = {0,0,0};            // abc参数的估计值
 
     vector<double> x_data, y_data;      // 数据
-    
+
+    //生成原始数据
     cout<<"generating data: "<<endl;
     for ( int i=0; i<N; i++ )
     {
         double x = i/100.0;
         x_data.push_back ( x );
-        y_data.push_back (
-            exp ( a*x*x + b*x + c ) + rng.gaussian ( w_sigma )
-        );
+        y_data.push_back (exp ( a*x*x + b*x + c ) + rng.gaussian ( w_sigma ));
         cout<<x_data[i]<<" "<<y_data[i]<<endl;
     }
     
@@ -76,35 +84,42 @@ int main( int argc, char** argv )
     Block::LinearSolverType* linearSolver = new g2o::LinearSolverDense<Block::PoseMatrixType>(); // 线性方程求解器
     Block* solver_ptr = new Block( linearSolver );      // 矩阵块求解器
     // 梯度下降方法，从GN, LM, DogLeg 中选
-    g2o::OptimizationAlgorithmLevenberg* solver = new g2o::OptimizationAlgorithmLevenberg( solver_ptr );
+
     // g2o::OptimizationAlgorithmGaussNewton* solver = new g2o::OptimizationAlgorithmGaussNewton( solver_ptr );
     // g2o::OptimizationAlgorithmDogleg* solver = new g2o::OptimizationAlgorithmDogleg( solver_ptr );
+
+
     g2o::SparseOptimizer optimizer;     // 图模型
+
+    g2o::OptimizationAlgorithmLevenberg* solver = new g2o::OptimizationAlgorithmLevenberg( solver_ptr );
     optimizer.setAlgorithm( solver );   // 设置求解器
+
     optimizer.setVerbose( true );       // 打开调试输出
     
-    // 往图中增加顶点
+    // 往图中增加顶点  CurveFittingVertex为之前定义的定点矩阵
     CurveFittingVertex* v = new CurveFittingVertex();
     v->setEstimate( Eigen::Vector3d(0,0,0) );
     v->setId(0);
-    optimizer.addVertex( v );
+    optimizer.addVertex( v ); //向图模型中添加定点
     
     // 往图中增加边
     for ( int i=0; i<N; i++ )
     {
-        CurveFittingEdge* edge = new CurveFittingEdge( x_data[i] );
+        CurveFittingEdge* edge = new CurveFittingEdge( x_data[i] ); //添加边
         edge->setId(i);
         edge->setVertex( 0, v );                // 设置连接的顶点
         edge->setMeasurement( y_data[i] );      // 观测数值
         edge->setInformation( Eigen::Matrix<double,1,1>::Identity()*1/(w_sigma*w_sigma) ); // 信息矩阵：协方差矩阵之逆
-        optimizer.addEdge( edge );
+        optimizer.addEdge( edge );//向图模型中添加定边
     }
     
     // 执行优化
     cout<<"start optimization"<<endl;
     chrono::steady_clock::time_point t1 = chrono::steady_clock::now();
+
     optimizer.initializeOptimization();
     optimizer.optimize(100);
+
     chrono::steady_clock::time_point t2 = chrono::steady_clock::now();
     chrono::duration<double> time_used = chrono::duration_cast<chrono::duration<double>>( t2-t1 );
     cout<<"solve time cost = "<<time_used.count()<<" seconds. "<<endl;

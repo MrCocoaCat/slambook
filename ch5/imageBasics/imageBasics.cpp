@@ -7,7 +7,12 @@ using namespace std;
 
 int main ( int argc, char** argv )
 {
-    // 读取argv[1]指定的图像
+    // 读取argv[1]指定的图像 
+    if(argc != 2)
+	{
+		cout<<"enter path"<<endl;
+		return 0;
+	}
     cv::Mat image;
     image = cv::imread ( argv[1] ); //cv::imread函数读取指定路径下的图像
     // 判断图像文件是否正确读取
