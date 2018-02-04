@@ -36,7 +36,7 @@ int main ( int argc, char** argv )
 
     Mat outimg1;
     drawKeypoints( img_1, keypoints_1, outimg1, Scalar::all(-1), DrawMatchesFlags::DEFAULT );
-    imshow("ORB特征点",outimg1); //显示ORB 特征点
+    imshow("ORB",outimg1); //显示ORB 特征点
 
 
 
@@ -78,8 +78,8 @@ int main ( int argc, char** argv )
     Mat img_goodmatch;
     drawMatches ( img_1, keypoints_1, img_2, keypoints_2, matches, img_match );
     drawMatches ( img_1, keypoints_1, img_2, keypoints_2, good_matches, img_goodmatch );
-    imshow ( "所有匹配点对", img_match );
-    imshow ( "优化后匹配点对", img_goodmatch );
+    imshow ( "match1", img_match );
+    imshow ( "match2", img_goodmatch );
     waitKey(0);
 
     return 0;

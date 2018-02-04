@@ -14,6 +14,9 @@ include_directories( ${Pangolin_INCLUDE_DIRS} )
 find_package( OpenCV REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 
+
+#set(OpenCV_DIR /usr/local/share/OpenCV/)
+
 find_package( Sophus REQUIRED )
 include_directories( ${Sophus_INCLUDE_DIRS} )
 

@@ -9,6 +9,7 @@
  #include <Eigen/Dense>
 
 #include <string>
+#include <math.h>
 
 using namespace std;
 // ORB pattern
@@ -313,34 +314,35 @@ int main(int argc, char **argv)
     cv::Mat first_image = cv::imread(first_file, 0);    // load grayscale image
     if(first_image.data == NULL)
     {
-        perror("");
+        perror("first_image read failed");
     }
     cv::Mat second_image = cv::imread(second_file, 0);  // load grayscale image
     if(second_image.data == NULL)
     {
-        perror("");
+        perror("second_image read failed");
     }
 
     // plot the image
 
-    cv::imshow("first image", first_image); //显示第一个图片
-    cv::imshow("second image", second_image); //显示第二个图片//cv::waitKey(0);
-
+    //cv::imshow("first image", first_image); //显示第一个图片
+   // cv::imshow("second image", second_image); //显示第二个图片//cv::waitKey(0);
+    //cv::waitKey(0);
     // detect FAST keypoints using threshold=40
     vector<cv::KeyPoint> keypoints;
     cv::FAST(first_image, keypoints, 40); //调用FAST函数
     cout << "keypoints: " << keypoints.size() << endl; //输出关键点个数
-    cv::waitKey(0);
 
     // compute angle for each keypoint
     //完成函数,计数按每个特征点的角度
-    computeAngle(first_image, keypoints);
 
+    computeAngle(first_image, keypoints);
     // compute ORB descriptors
     vector<DescType> descriptors;
 
+
     //完成函数,计数ORB描述子
     computeORBDesc(first_image, keypoints, descriptors);
+
 
     // plot the keypoints
     cv::Mat image_show;
@@ -366,13 +368,12 @@ int main(int argc, char **argv)
     vector<DescType> descriptors2;
     computeORBDesc(second_image, keypoints2, descriptors2);
 
+
     // find matches,寻找匹配点
     vector<cv::DMatch> matches;
-
     //完成匹配函数,传入描述子
     bfMatch(descriptors, descriptors2, matches);
     cout << "matches: " << matches.size() << endl;
-
 
     // plot the matches
     cv::drawMatches(first_image, keypoints, second_image, keypoints2, matches, image_show);
@@ -397,11 +398,11 @@ void computeAngle(const cv::Mat &image, vector<cv::KeyPoint> &keypoints)
         float M10=0,M01=0;
         //图像宽为image.cols ,横坐标v
         // 高为image.rows,纵坐标 u
-        cout<<"image.cols"<<image.cols<<endl;
-        cout<<"kp.pt.x"<<kp.pt.x<<endl;
+        //cout<<"image.cols"<<image.cols<<endl;
+        //cout<<"kp.pt.x"<<kp.pt.x<<endl;
         int x = cvRound(kp.pt.x) ;
         int y = cvRound(kp.pt.y) ;
-        if( x -8< 0 || x+7 > image.cols || y-8 < 0 || y+7 > image.rows )
+        if( x - 8 < 0 || x + 7 > image.cols || y - 8 < 0 || y + 7 > image.rows )
         {
             continue;
         }
@@ -414,9 +415,8 @@ void computeAngle(const cv::Mat &image, vector<cv::KeyPoint> &keypoints)
                 M01 = M01 + u * d;
             }
         }
-        float ang = atan(M10/M01)*180/pi;
+        float ang = atan2(M10,M01)*180.f/pi; //角度
         kp.angle = ang; // compute kp.angle
-
         // END YOUR CODE HERE
     }
     return;
@@ -427,76 +427,57 @@ void computeAngle(const cv::Mat &image, vector<cv::KeyPoint> &keypoints)
 // compute the descriptor
 void computeORBDesc(const cv::Mat &image, vector<cv::KeyPoint> &keypoints, vector<DescType> &desc)
 {
+    int mycout = 0;
     for (auto &kp: keypoints) //遍历关键点
     {
+        //cout<<"point:"<<mycout++<<" x: "<<kp.pt.x<<" y: " << kp.pt.y<<endl;
         DescType d(256, false); //bool数组
         //计数描述子
-        if( kp.pt.x < 8 || kp.pt.x > image.step-7 || kp.pt.y < 8 || kp.pt.y> image.rows-7  )
-        {
-            d.clear();
-            break;
-        }
+
         for (int i = 0; i < 256; i++)
         {
             // START YOUR CODE HERE (~7 lines)
-            float  ang = kp.angle*pi/180;
-            int x,y;
+            float  ang = kp.angle * pi/180.f; //角度到弧度
+           // cout<<" ang=  "<<ang<<endl;
 
-            Eigen::Matrix<float, 2, 2> matrix_22;
-            matrix_22<<cos(ang),-sin(ang),sin(ang),cos(ang);
-            //计算p点
-            Eigen::Matrix<float, 2, 1> matrix_p1;
-            Eigen::Matrix<float, 2, 1> matrix_p2;
-            Eigen::Matrix<float, 2, 1> matrix_q1;
-            Eigen::Matrix<float, 2, 1> matrix_q2;
-
-            /*
-            matrix_p1[0] = kp.pt.x + ORB_pattern[4*i + 0];
-            matrix_p1[1] = kp.pt.y + ORB_pattern[4*i + 1];
-            matrix_q1[0] = kp.pt.x + ORB_pattern[4*i + 2];
-            matrix_q1[1] = kp.pt.y + ORB_pattern[4*i + 3];
-            matrix_p2 = matrix_22 * matrix_p1;
-            x = matrix_p2[0];
-            y = matrix_p2[1];
+//            Eigen::Matrix<float, 2, 2> matrix_22;
+//            matrix_22<<cos(ang),-sin(ang),sin(ang),cos(ang);
+//            //计算p点
+//            Eigen::Matrix<float, 2, 1> matrix_p1;
+//            Eigen::Matrix<float, 2, 1> matrix_p2;
+//            Eigen::Matrix<float, 2, 1> matrix_q1;
+//            Eigen::Matrix<float, 2, 1> matrix_q2;
 
 
-
-
-
-            unsigned int Ip = image.ptr<unsigned short> (y)[x];
-
-            //计算q点
-
-
-            matrix_q1[0] = kp.pt.x + ORB_pattern[4*i + 2];
-            matrix_q1[1] = kp.pt.y + ORB_pattern[4*i + 3];
-
-            if( matrix_q1[0] < 0 || matrix_q1[0] > image.cols || matrix_q1[1] < 0 || matrix_q1[1] > image.rows )
+//            float p1x = kp.pt.x + ORB_pattern[4*i + 0];
+//            float p1y = kp.pt.y + ORB_pattern[4*i + 1];
+//            float q1x = kp.pt.x + ORB_pattern[4*i + 2];
+//            float q1y = kp.pt.y + ORB_pattern[4*i + 3];
+            float p1x = ORB_pattern[4*i + 0];
+            float p1y = ORB_pattern[4*i + 1];
+            float q1x = ORB_pattern[4*i + 2];
+            float q1y = ORB_pattern[4*i + 3];
+//            if( p1x<0 || p1y<0 || q1x<0 || q1y<0 || p1x>image.cols || q1x>image.cols || p1y>image.rows || p1y>image.rows)
+//            {
+//                d.clear();
+//                cout<<"pq1-wrong:"<<p1x<<" "<< p1y<<" "<<q1x<<" "<<q1y<<endl;
+//                break;
+//            }
+            float p2x = p1x*cos(ang) - p1y*sin(ang);
+            float p2y = p1x*sin(ang) + p1y*cos(ang);
+            float q2x = q1x*cos(ang) - q1y*sin(ang);
+            float q2y = q1x*sin(ang) + q1y*cos(ang);
+            if( kp.pt.x +p2x<0 || kp.pt.y +p2y<0 || kp.pt.x +q2x<0 || kp.pt.y +q2y<0 || kp.pt.x +p2x>image.cols || kp.pt.x +q2x>image.cols || kp.pt.y +p2y>image.rows ||kp.pt.y + p2y>image.rows)
             {
                 d.clear();
+
+               // cout<<"pq2-wrong:"<<p2x<<" "<< p2y<<" "<<q2x<<" "<<q2y<<endl;
                 break;
             }
-            matrix_q2 = matrix_22 * matrix_q1;
-            x = matrix_q2[0];
-            y = matrix_q2[1];
-            unsigned int Iq = image.ptr<uchar> (y)[x];
-            */
 
-
-
-            float p1x = kp.pt.x + ORB_pattern[4*i + 0];
-            float p1y = kp.pt.y + ORB_pattern[4*i + 1];
-            float q1x = kp.pt.x + ORB_pattern[4*i + 2];
-            float q1y = kp.pt.y + ORB_pattern[4*i + 3];
-
-            float p2x = p1x*cos(ang)-p1y*sin(ang);
-            float p2y = p1x*sin(ang)+p1y*cos(ang);
-            float q2x = q1x*cos(ang)-q1y*sin(ang);
-            float q2y = q1x*sin(ang)+q1y*cos(ang);
-
-            unsigned int Ip = image.ptr<uchar> (cvRound(kp.pt.y+p2y))[cvRound(kp.pt.x+p2x)];
-            unsigned int Iq = image.ptr<uchar> (cvRound(kp.pt.y+q2y))[cvRound(kp.pt.x+q2x)];
-
+            unsigned int Ip = image.ptr<uchar> (cvRound(kp.pt.y +p2y))[cvRound( kp.pt.x +p2x)];
+            unsigned int Iq = image.ptr<uchar> (cvRound(kp.pt.y +q2y))[cvRound( kp.pt.x +q2x)];
+            //cout<<i<<"---Ip:"<<Ip<<"Iq:"<<Iq<<endl;
             if( Ip > Iq)
             {
                 d[i] = 0;
@@ -505,7 +486,6 @@ void computeORBDesc(const cv::Mat &image, vector<cv::KeyPoint> &keypoints, vecto
             {
                 d[i] = 1;  // if kp goes outside, set d.clear()
             }
-
 	        // END YOUR CODE HERE
         }
         //压入描述子
@@ -527,39 +507,37 @@ void computeORBDesc(const cv::Mat &image, vector<cv::KeyPoint> &keypoints, vecto
 // brute-force matching,暴力匹配
 void bfMatch(const vector<DescType> &desc1, const vector<DescType> &desc2, vector<cv::DMatch> &matches)
 {
+    cout<<"start bfMatch"<<endl;
     int d_max = 50;
-
     // START YOUR CODE HERE (~12 lines)
-
     //DescType放描述子 ,每个描述子是256的数组
-
     // find matches between desc1 and desc2.
-    for(int i = 0;i <= desc1.size();i++) //依次取第一个特征
+    for(int i = 0; i < desc1.size() ; i++) //依次取第一个特征
     {
+        //cout<<"i:"<<i<<endl;
         if( desc1[i].empty())
         {
             continue;
         }
         cv::DMatch m;
         m.distance = 256.f;
-        for(auto j = 0;j <= desc2.size();j++) //依次取第二个特征
+        for(auto j = 0; j < desc2.size() ;j++) //依次取第二个特征
         {
 
-
             int iDistance = 0;
-            for(int k=0;k<256;k++)
+            for(int k=0; k<256 ; k++)
             {
-                if(desc1[i][k] != desc2[i][k])
+                if(desc1[i][k] != desc2[j][k])
                 {
                     iDistance++;
                 }
             }
             //取最小值作为匹配点
-            if(iDistance <= m.distance)
+            if( iDistance <= m.distance )
             {
                 m.distance = iDistance;
-                m.imgIdx = i;
-                m.queryIdx = j;
+                m.trainIdx = j;
+                m.queryIdx = i;
             }
         }
         //小于 50 保留
@@ -568,7 +546,6 @@ void bfMatch(const vector<DescType> &desc1, const vector<DescType> &desc2, vecto
             matches.push_back(m);
         }
     }
-
     // END YOUR CODE HERE
     for (auto &m: matches)
     {
@@ -576,3 +553,35 @@ void bfMatch(const vector<DescType> &desc1, const vector<DescType> &desc2, vecto
     }
     return;
 }
+
+
+
+
+
+
+/*
+matrix_p1[0] = kp.pt.x + ORB_pattern[4*i + 0];
+matrix_p1[1] = kp.pt.y + ORB_pattern[4*i + 1];
+matrix_q1[0] = kp.pt.x + ORB_pattern[4*i + 2];
+matrix_q1[1] = kp.pt.y + ORB_pattern[4*i + 3];
+matrix_p2 = matrix_22 * matrix_p1;
+x = matrix_p2[0];
+y = matrix_p2[1];
+
+unsigned int Ip = image.ptr<unsigned short> (y)[x];
+
+//计算q点
+
+matrix_q1[0] = kp.pt.x + ORB_pattern[4*i + 2];
+matrix_q1[1] = kp.pt.y + ORB_pattern[4*i + 3];
+
+if( matrix_q1[0] < 0 || matrix_q1[0] > image.cols || matrix_q1[1] < 0 || matrix_q1[1] > image.rows )
+{
+    d.clear();
+    break;
+}
+matrix_q2 = matrix_22 * matrix_q1;
+x = matrix_q2[0];
+y = matrix_q2[1];
+unsigned int Iq = image.ptr<uchar> (y)[x];
+*/
