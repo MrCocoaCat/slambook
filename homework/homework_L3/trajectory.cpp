@@ -11,29 +11,31 @@ using namespace std;
 // path to trajectory file
 string ground_truth = "../groundtruth.txt";
 
-string estimate = "./estimated.txt";
+string estimate = "../estimated.txt";
 
 // function for plotting trajectory, don't edit this code
 // start point is red and end point is blue
 void DrawTrajectory(vector<Sophus::SE3, Eigen::aligned_allocator<Sophus::SE3>>);
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 
     vector<Sophus::SE3, Eigen::aligned_allocator<Sophus::SE3>> poses;
 
     /// implement pose reading code
     // start your codsume here (5~10 lines)
     ifstream fin1(ground_truth);
-    if (! fin1.is_open())
+    if (!fin1.is_open())
     {
         perror("Error opening file");
         exit (1);
     }
 
     ifstream fin2(estimate);
-    if (! fin2.is_open())
+    if (!fin2.is_open())
     {
 
+        perror("Error opening file");
         exit (1);
     }
     double arr1[8];

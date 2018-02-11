@@ -2,7 +2,6 @@
 // Created by liyubo on 12/15/17.
 //
 #include <iostream>
-#include <cmath>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 using namespace std;

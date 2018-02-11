@@ -178,7 +178,9 @@ void OpticalFlowSingleLevel(
 
             // compute cost and jacobian
             for (int x = -half_patch_size; x < half_patch_size; x++)
-                for (int y = -half_patch_size; y < half_patch_size; y++) {
+            {
+                for (int y = -half_patch_size; y < half_patch_size; y++)
+                {
 
                     // TODO START YOUR CODE HERE (~8 lines)
                     double error = 0;
@@ -188,13 +190,17 @@ void OpticalFlowSingleLevel(
                     error =   -(GetPixelValue(img1,X,Y) - GetPixelValue(img2,X+dx,Y+dy)) ;
 //                    error = GetPixelValue(img1,X,Y) - GetPixelValue(img2,X+dx,Y+dy);
                     Eigen::Vector2d J;  // Jacobian
-                    if (inverse == false) {
+                    if (inverse == false)
+                    {
                         // Forward Jacobian
                         J[0] = ( GetPixelValue(img2,X+dx+1,Y+dy) - GetPixelValue(img2,X+dx-1,Y+dy) )/2;
                         J[1] = ( GetPixelValue(img2,X+dx,Y+dy+1) - GetPixelValue(img2,X+dx,Y+dy-1) )/2;
-                    } else {
+                    }
+                    else
+                    {
                         // Inverse Jacobian
-                        if(have_computed_J == false) {
+                        if(have_computed_J == false)
+                        {
                             J[0] = (GetPixelValue(img1, X + 1, Y) - GetPixelValue(img1, X - 1, Y)) / 2;
                             J[1] = (GetPixelValue(img1, X, Y + 1) - GetPixelValue(img1, X, Y - 1)) / 2;
                             have_computed_J = true;
@@ -209,20 +215,22 @@ void OpticalFlowSingleLevel(
                     cost += error * error;
                     // TODO END YOUR CODE HERE
                 }
-
+            }
             // compute update
             // TODO START YOUR CODE HERE (~1 lines)
             Eigen::Vector2d update;
             update = H.ldlt().solve(b);
             // TODO END YOUR CODE HERE
 
-            if (std::isnan(update[0])) {
+            if (std::isnan(update[0]))
+            {
                 // sometimes occurred when we have a black or white patch and H is irreversible
                 cout << "update is nan" << endl;
                 succ = false;
                 break;
             }
-            if (iter > 0 && cost > lastCost) {
+            if (iter > 0 && cost > lastCost)
+            {
                 cout << "cost increased: " << cost << ", " << lastCost << endl;
                 break;
             }
@@ -237,9 +245,12 @@ void OpticalFlowSingleLevel(
         success.push_back(succ);
 
         // set kp2
-        if (have_initial) {
+        if (have_initial)
+        {
             kp2[i].pt = kp.pt + Point2f(dx, dy);//如果已经初始化了，就根据原有的kp偏移
-        } else {
+        }
+        else
+        {
             KeyPoint tracked = kp;
             tracked.pt += cv::Point2f(dx, dy);
             kp2.push_back(tracked);

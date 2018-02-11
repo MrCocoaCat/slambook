@@ -29,7 +29,6 @@ int main(int argc, char **argv) {
 
         //cout<<t<<" "<<tx<<" "<<ty<<" "<<tz<<" "<<qx<<" "<<qy<<" "<<qz<<" "<<qw<<endl;
         Eigen::Vector3d tt(tx,ty,tz);
-
         Eigen::Quaterniond q(qw,qx,qy,qz);//四元数
         Eigen::Matrix3d R(q); //旋转矩阵
         Sophus::SE3 point(R,tt);

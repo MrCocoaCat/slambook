@@ -9,3 +9,6 @@ include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 add_executable( useLK useLK.cpp )
 target_link_libraries( useLK ${OpenCV_LIBS} )
+
+add_executable( LK LK.cpp )
+target_link_libraries( LK ${OpenCV_LIBS} )

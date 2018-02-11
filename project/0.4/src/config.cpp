@@ -26,6 +26,7 @@ void Config::setParameterFile( const std::string& filename )
 {
     if ( config_ == nullptr )
         config_ = shared_ptr<Config>(new Config);
+    //调用OPenCV 函数,读配置文件
     config_->file_ = cv::FileStorage( filename.c_str(), cv::FileStorage::READ );
     if ( config_->file_.isOpened() == false )
     {

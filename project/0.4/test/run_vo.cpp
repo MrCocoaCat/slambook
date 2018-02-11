@@ -17,20 +17,26 @@ int main ( int argc, char** argv )
         return 1;
     }
 
+    //Config是单利类，在setParameterFile函数中构造对象
     myslam::Config::setParameterFile ( argv[1] );
+
+    //创建VisualOdometry对象vo指针，vo类是整个流程的入口
     myslam::VisualOdometry::Ptr vo ( new myslam::VisualOdometry );
 
     string dataset_dir = myslam::Config::get<string> ( "dataset_dir" );
     cout<<"dataset: "<<dataset_dir<<endl;
+
     ifstream fin ( dataset_dir+"/associate.txt" );
     if ( !fin )
     {
-        cout<<"please generate the associate file called associate.txt!"<<endl;
+        perror("please generate the associate file called associate.txt!");
+        //cout<<"please generate the associate file called associate.txt!"<<endl;
         return 1;
     }
 
-    vector<string> rgb_files, depth_files;
-    vector<double> rgb_times, depth_times;
+    vector<string> rgb_files, depth_files;//管理图片文件的容器
+    vector<double> rgb_times, depth_times;//管理时间的容器
+
     while ( !fin.eof() )
     {
         string rgb_time, rgb_file, depth_time, depth_file;
@@ -44,6 +50,7 @@ int main ( int argc, char** argv )
             break;
     }
 
+    //创建camera类对象，每个frame 对象都包含同一个camera 对象
     myslam::Camera::Ptr camera ( new myslam::Camera );
 
     // visualization
@@ -59,21 +66,29 @@ int main ( int argc, char** argv )
     vis.showWidget ( "Camera", camera_coor );
 
     cout<<"read total "<<rgb_files.size() <<" entries"<<endl;
+    //循环遍历每一张图片
     for ( int i=0; i<rgb_files.size(); i++ )
     {
         cout<<"****** loop "<<i<<" ******"<<endl;
         Mat color = cv::imread ( rgb_files[i] );
         Mat depth = cv::imread ( depth_files[i], -1 );
-        if ( color.data==nullptr || depth.data==nullptr )
-            break;
+
+        if ( color.data == nullptr || depth.data == nullptr )
+        {
+            perror("read image wrong");
+        }
+        //创建帧对象，通过createFrame会对静态变量进行++，通过这个函数调用构造函数，赋值帧ID
         myslam::Frame::Ptr pFrame = myslam::Frame::createFrame();
         pFrame->camera_ = camera;
-        pFrame->color_ = color;
-        pFrame->depth_ = depth;
-        pFrame->time_stamp_ = rgb_times[i];
+        pFrame->color_ = color; //赋值 rgb图片
+        pFrame->depth_ = depth; //赋值 depth图片
+        pFrame->time_stamp_ = rgb_times[i]; //赋值时间戳
 
         boost::timer timer;
+
+        //调用addFrame函数
         vo->addFrame ( pFrame );
+
         cout<<"VO costs time: "<<timer.elapsed() <<endl;
 
         if ( vo->state_ == myslam::VisualOdometry::LOST )

@@ -29,6 +29,7 @@
 namespace myslam
 {
 
+//构造函数，默认初始化状态为INITIALIZING
 VisualOdometry::VisualOdometry() :
     state_ ( INITIALIZING ), ref_ ( nullptr ), curr_ ( nullptr ), map_ ( new Map ), num_lost_ ( 0 ), num_inliers_ ( 0 )
 {
@@ -42,7 +43,7 @@ VisualOdometry::VisualOdometry() :
     key_frame_min_trans = Config::get<double> ( "keyframe_translation" );
     orb_ = cv::ORB::create ( num_of_features_, scale_factor_, level_pyramid_ );
 }
-
+//析构函数
 VisualOdometry::~VisualOdometry()
 {
 
@@ -50,54 +51,64 @@ VisualOdometry::~VisualOdometry()
 
 bool VisualOdometry::addFrame ( Frame::Ptr frame )
 {
+    //判断VOState 状态
     switch ( state_ )
     {
-    case INITIALIZING:
-    {
-        state_ = OK;
-        curr_ = ref_ = frame;
-        map_->insertKeyFrame ( frame );
-        // extract features from first frame 
-        extractKeyPoints();
-        computeDescriptors();
-        // compute the 3d position of features in ref frame 
-        setRef3DPoints();
-        break;
-    }
-    case OK:
-    {
-        curr_ = frame;
-        extractKeyPoints();
-        computeDescriptors();
-        featureMatching();
-        poseEstimationPnP();
-        if ( checkEstimatedPose() == true ) // a good estimation
+        case INITIALIZING:
         {
-            curr_->T_c_w_ = T_c_r_estimated_ * ref_->T_c_w_;  // T_c_w = T_c_r*T_r_w 
-            ref_ = curr_;
+            //如果未初始化，以该帧为参考帧，根据深度图计算关键点的3D位置
+            state_ = OK;
+            //当前帧，参考帧均设置为frame
+            curr_ = ref_ = frame;
+            //将当前帧插入map 中管理
+            map_->insertKeyFrame ( frame );
+
+            // extract features from first frame
+            //计算关键点放入 keypoints_curr_中
+            extractKeyPoints();
+            //计算描述子 ，放入descriptors_curr_中
+            computeDescriptors();
+            //
+            // compute the 3d position of features in ref frame
             setRef3DPoints();
-            num_lost_ = 0;
-            if ( checkKeyFrame() == true ) // is a key-frame
-            {
-                addKeyFrame();
-            }
+            break;
         }
-        else // bad estimation due to various reasons
+        case OK:
         {
-            num_lost_++;
-            if ( num_lost_ > max_num_lost_ )
+            //估计参考帧与当前帧的运动
+            curr_ = frame;
+            extractKeyPoints();
+            computeDescriptors();
+
+            featureMatching();//匹配
+            poseEstimationPnP(); //位置估计
+            if ( checkEstimatedPose() == true ) // a good estimation
             {
-                state_ = LOST;
+                curr_->T_c_w_ = T_c_r_estimated_ * ref_->T_c_w_;  // T_c_w = T_c_r*T_r_w
+                ref_ = curr_;
+                setRef3DPoints();
+                num_lost_ = 0;
+                if ( checkKeyFrame() == true ) // is a key-frame
+                {
+                    addKeyFrame();
+                }
             }
-            return false;
+            else // bad estimation due to various reasons
+            {
+                num_lost_++;
+                if ( num_lost_ > max_num_lost_ )
+                {
+                    state_ = LOST;
+                }
+                return false;
+            }
+            break;
         }
-        break;
-    }
-    case LOST:
-    {
-        cout<<"vo has lost."<<endl;
-        break;
-    }
+        case LOST:
+        {
+            cout<<"vo has lost."<<endl;
+            break;
+        }
     }
 
     return true;
@@ -105,21 +116,25 @@ bool VisualOdometry::addFrame ( Frame::Ptr frame )
 
 void VisualOdometry::extractKeyPoints()
 {
+    //计算当前帧的图片 角点位置，放入keypoints_curr_中
     orb_->detect ( curr_->color_, keypoints_curr_ );
 }
 
 void VisualOdometry::computeDescriptors()
 {
+    //计算当前帧的图片 描述子，放入descriptors_curr_中
     orb_->compute ( curr_->color_, keypoints_curr_, descriptors_curr_ );
 }
-
+    //计算匹配
 void VisualOdometry::featureMatching()
 {
     // match desp_ref and desp_curr, use OpenCV's brute force match 
     vector<cv::DMatch> matches;
     cv::BFMatcher matcher ( cv::NORM_HAMMING );
+    //计算参考帧关键点，与当前帧关键点之间的匹配，放入matches 中
     matcher.match ( descriptors_ref_, descriptors_curr_, matches );
     // select the best matches
+    //赋值最小距离min_dis
     float min_dis = std::min_element (
                         matches.begin(), matches.end(),
                         [] ( const cv::DMatch& m1, const cv::DMatch& m2 )
@@ -128,6 +143,7 @@ void VisualOdometry::featureMatching()
     } )->distance;
 
     feature_matches_.clear();
+    //安规则选取合格的匹配点
     for ( cv::DMatch& m : matches )
     {
         if ( m.distance < max<float> ( min_dis*match_ratio_, 30.0 ) )
@@ -138,20 +154,28 @@ void VisualOdometry::featureMatching()
     cout<<"good matches: "<<feature_matches_.size()<<endl;
 }
 
+    //设置参考帧的3D点
 void VisualOdometry::setRef3DPoints()
 {
     // select the features with depth measurements 
     pts_3d_ref_.clear();
     descriptors_ref_ = Mat();
+    //遍历当前帧的关键点
     for ( size_t i=0; i<keypoints_curr_.size(); i++ )
     {
+        //根据参考帧，寻找深度值
         double d = ref_->findDepth(keypoints_curr_[i]);               
         if ( d > 0)
         {
+            //p_cam 为当前帧的关键点相机坐标
+            //调用相机类的pixel2camera ,将像素坐标转换为相机坐标
             Vector3d p_cam = ref_->camera_->pixel2camera(
                 Vector2d(keypoints_curr_[i].pt.x, keypoints_curr_[i].pt.y), d
             );
+
+            //压入pts_3d_ref_容器内内，，3d的参考点
             pts_3d_ref_.push_back( cv::Point3f( p_cam(0,0), p_cam(1,0), p_cam(2,0) ));
+            //将当前帧，压入参考帧的描述
             descriptors_ref_.push_back(descriptors_curr_.row(i));
         }
     }
@@ -162,21 +186,23 @@ void VisualOdometry::poseEstimationPnP()
     // construct the 3d 2d observations
     vector<cv::Point3f> pts3d;
     vector<cv::Point2f> pts2d;
-    
+    //feature_matches_是挑选之后的特征点，遍历
     for ( cv::DMatch m:feature_matches_ )
     {
-        pts3d.push_back( pts_3d_ref_[m.queryIdx] );
-        pts2d.push_back( keypoints_curr_[m.trainIdx].pt );
+        pts3d.push_back( pts_3d_ref_[m.queryIdx] );// queryIdx： query descriptor index
+        pts2d.push_back( keypoints_curr_[m.trainIdx].pt ); // trainIdx:train descriptor index
     }
-    
+    //相机内参
     Mat K = ( cv::Mat_<double>(3,3)<<
         ref_->camera_->fx_, 0, ref_->camera_->cx_,
         0, ref_->camera_->fy_, ref_->camera_->cy_,
         0,0,1
     );
     Mat rvec, tvec, inliers;
+    //
     cv::solvePnPRansac( pts3d, pts2d, K, Mat(), rvec, tvec, false, 100, 4.0, 0.99, inliers );
     num_inliers_ = inliers.rows;
+
     cout<<"pnp inliers: "<<num_inliers_<<endl;
     T_c_r_estimated_ = SE3(
         SO3(rvec.at<double>(0,0), rvec.at<double>(1,0), rvec.at<double>(2,0)), 

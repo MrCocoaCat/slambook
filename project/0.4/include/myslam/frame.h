@@ -32,11 +32,12 @@ class Frame
 {
 public:
     typedef std::shared_ptr<Frame> Ptr;
-    unsigned long                  id_;         // id of this frame
-    double                         time_stamp_; // when it is recorded
+    unsigned long                  id_;         // 这个帧的编号，id of this frame
+    double                         time_stamp_; // 时间戳 when it is recorded
     SE3                            T_c_w_;      // transform from world to camera
-    Camera::Ptr                    camera_;     // Pinhole RGBD Camera model 
-    Mat                            color_, depth_; // color and depth image 
+    Camera::Ptr                    camera_;     // 包含相机类的指针  Pinhole RGBD Camera model
+    Mat                            color_;     //彩色图片color
+    Mat                            depth_;    // 深度图片
     // std::vector<cv::KeyPoint>      keypoints_;  // key points in image
     // std::vector<MapPoint*>         map_points_; // associated map points
     bool                           is_key_frame_;  // whether a key-frame

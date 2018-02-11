@@ -81,6 +81,7 @@ int main ( int argc, char** argv )
     Mat r, t;
 
     solvePnP ( pts_3d, pts_2d, K, Mat(), r, t, false ); // 调用OpenCV 的 PnP 求解，可选择EPNP，DLS等方法
+    //solvePnPRansac ( pts_3d, pts_2d, K, Mat(), r, t, false );
     Mat R;
     //旋转向量到旋转矩阵
     cv::Rodrigues ( r, R ); // r为旋转向量形式，用Rodrigues公式转换为矩阵

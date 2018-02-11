@@ -52,26 +52,36 @@ VisualOdometry::~VisualOdometry()
 
 bool VisualOdometry::addFrame ( Frame::Ptr frame )
 {
+    //判断state_ 类型，初始化为INITIALIZING 状态
     switch ( state_ )
     {
     case INITIALIZING:
     {
         state_ = OK;
-        curr_ = ref_ = frame;
+        curr_ = ref_ = frame; //赋值当前帧和参考帧均为此帧
         // extract features from first frame and add them into map
-        extractKeyPoints();
-        computeDescriptors();
-        addKeyFrame();      // the first frame is a key-frame
+        //计算当前帧的特征点
+        this->extractKeyPoints();
+        //计算当前帧的描述子
+        this->computeDescriptors();
+
+        //放入关键帧，把第一帧的所有特征点都放入地图中
+        this->addKeyFrame();      // the first frame is a key-frame
+
         break;
     }
     case OK:
     {
         curr_ = frame;
         curr_->T_c_w_ = ref_->T_c_w_;
-        extractKeyPoints();
-        computeDescriptors();
-        featureMatching();
-        poseEstimationPnP();
+        //计算当前帧的特征点
+        this->extractKeyPoints();
+        //计算当前帧的描述子
+        this->computeDescriptors();
+        //特征点匹配
+        this->featureMatching();
+        //计算位置，通过pnp
+        this->poseEstimationPnP();
         if ( checkEstimatedPose() == true ) // a good estimation
         {
             curr_->T_c_w_ = T_c_w_estimated_;
@@ -102,7 +112,7 @@ bool VisualOdometry::addFrame ( Frame::Ptr frame )
 
     return true;
 }
-
+    //计算当前帧的特征点，放入keypoints_curr_容器中
 void VisualOdometry::extractKeyPoints()
 {
     boost::timer timer;
@@ -110,6 +120,7 @@ void VisualOdometry::extractKeyPoints()
     cout<<"extract keypoints cost time: "<<timer.elapsed() <<endl;
 }
 
+    //计算当前帧的描述子，放入descriptors_curr_容器中
 void VisualOdometry::computeDescriptors()
 {
     boost::timer timer;
@@ -124,10 +135,16 @@ void VisualOdometry::featureMatching()
     // select the candidates in map 
     Mat desp_map;
     vector<MapPoint::Ptr> candidate;
+
+    //遍历map类中的地图特征点，map_points_为管理地图特征点的hash 容器，存放的为MapPoint类指针
     for ( auto& allpoints: map_->map_points_ )
     {
+        //allpoints 为hash 迭代器
+        //p为MapPoint 类指针
         MapPoint::Ptr& p = allpoints.second;
-        // check if p in curr frame image 
+        // check if p in curr frame image
+        //如果该店在图片中，pos_ 为世界坐标，通过isInFrame进行判断
+
         if ( curr_->isInFrame(p->pos_) )
         {
             // add to candidate 
@@ -136,9 +153,10 @@ void VisualOdometry::featureMatching()
             desp_map.push_back( p->descriptor_ );
         }
     }
-    
+    //通过matcher_flann_ 进行匹配
     matcher_flann_.match ( desp_map, descriptors_curr_, matches );
     // select the best matches
+    //宣选取匹配点的最小距离
     float min_dis = std::min_element (
                         matches.begin(), matches.end(),
                         [] ( const cv::DMatch& m1, const cv::DMatch& m2 )
@@ -148,18 +166,23 @@ void VisualOdometry::featureMatching()
 
     match_3dpts_.clear();
     match_2dkp_index_.clear();
+
+    //对匹配点进行筛选
     for ( cv::DMatch& m : matches )
     {
         if ( m.distance < max<float> ( min_dis*match_ratio_, 30.0 ) )
         {
+            //存储合格的匹配点_
             match_3dpts_.push_back( candidate[m.queryIdx] );
             match_2dkp_index_.push_back( m.trainIdx );
         }
     }
+
     cout<<"good matches: "<<match_3dpts_.size() <<endl;
     cout<<"match cost time: "<<timer.elapsed() <<endl;
 }
 
+    //通过匹配计算位姿
 void VisualOdometry::poseEstimationPnP()
 {
     // construct the 3d 2d observations
@@ -170,6 +193,7 @@ void VisualOdometry::poseEstimationPnP()
     {
         pts2d.push_back ( keypoints_curr_[index].pt );
     }
+
     for ( MapPoint::Ptr pt:match_3dpts_ )
     {
         pts3d.push_back( pt->getPositionCV() );
@@ -262,28 +286,40 @@ bool VisualOdometry::checkKeyFrame()
     return false;
 }
 
+//放入关键帧
 void VisualOdometry::addKeyFrame()
 {
+    //keyframes_ 为管理关键帧的hash容器
     if ( map_->keyframes_.empty() )
     {
         // first key-frame, add all 3d points into map
+
+        //遍历当前帧的特征点
         for ( size_t i=0; i<keypoints_curr_.size(); i++ )
         {
+            //寻找该特征点的深度值
             double d = curr_->findDepth ( keypoints_curr_[i] );
-            if ( d < 0 ) 
+            if ( d < 0 )
+            {
                 continue;
+            }
+            //转换到世界坐标
             Vector3d p_world = ref_->camera_->pixel2world (
                 Vector2d ( keypoints_curr_[i].pt.x, keypoints_curr_[i].pt.y ), curr_->T_c_w_, d
             );
+            //
             Vector3d n = p_world - ref_->getCamCenter();
-            n.normalize();
+
+            n.normalize();//归一化
+
             MapPoint::Ptr map_point = MapPoint::createMapPoint(
                 p_world, n, descriptors_curr_.row(i).clone(), curr_.get()
             );
+            //将该帧加入地图hash 中进行管理
             map_->insertMapPoint( map_point );
         }
     }
-    
+    //插入关键帧
     map_->insertKeyFrame ( curr_ );
     ref_ = curr_;
 }
@@ -313,7 +349,7 @@ void VisualOdometry::addMapPoints()
         map_->insertMapPoint( map_point );
     }
 }
-
+    //对地图进行优化，删除不在视野中的点
 void VisualOdometry::optimizeMap()
 {
     // remove the hardly seen and no visible points 

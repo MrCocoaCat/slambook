@@ -41,9 +41,11 @@ Frame::~Frame()
 Frame::Ptr Frame::createFrame()
 {
     static long factory_id = 0;
+    //为每一个帧进行编号
     return Frame::Ptr( new Frame(factory_id++) );
 }
 
+    //寻找该点的特征值
 double Frame::findDepth ( const cv::KeyPoint& kp )
 {
     int x = cvRound(kp.pt.x);
@@ -51,11 +53,13 @@ double Frame::findDepth ( const cv::KeyPoint& kp )
     ushort d = depth_.ptr<ushort>(y)[x];
     if ( d!=0 )
     {
+        //相机参数
         return double(d)/camera_->depth_scale_;
     }
     else 
     {
-        // check the nearby points 
+        // check the nearby points
+        //若该店无深度值，则返回附近的深度值
         int dx[4] = {-1,0,1,0};
         int dy[4] = {0,-1,0,1};
         for ( int i=0; i<4; i++ )
@@ -71,11 +75,12 @@ double Frame::findDepth ( const cv::KeyPoint& kp )
 }
 
 void Frame::setPose ( const SE3& T_c_w )
+
 {
     T_c_w_ = T_c_w;
 }
 
-
+//
 Vector3d Frame::getCamCenter() const
 {
     return T_c_w_.inverse().translation();
@@ -84,9 +89,11 @@ Vector3d Frame::getCamCenter() const
 bool Frame::isInFrame ( const Vector3d& pt_world )
 {
     Vector3d p_cam = camera_->world2camera( pt_world, T_c_w_ );
+
     // cout<<"P_cam = "<<p_cam.transpose()<<endl;
     if ( p_cam(2,0)<0 ) return false;
     Vector2d pixel = camera_->world2pixel( pt_world, T_c_w_ );
+
     // cout<<"P_pixel = "<<pixel.transpose()<<endl<<endl;
     return pixel(0,0)>0 && pixel(1,0)>0 
         && pixel(0,0)<color_.cols 

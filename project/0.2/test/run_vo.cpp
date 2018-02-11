@@ -7,8 +7,8 @@
 
 #include "myslam/config.h"
 #include "myslam/visual_odometry.h"
-
-int main ( int argc, char** argv )
+//主函数
+main ( int argc, char** argv )
 {
     if ( argc != 2 )
     {
@@ -46,6 +46,7 @@ int main ( int argc, char** argv )
     myslam::Camera::Ptr camera ( new myslam::Camera );
     
     // visualization
+    //启动3D模块
     cv::viz::Viz3d vis("Visual Odometry");
     cv::viz::WCoordinateSystem world_coor(1.0), camera_coor(0.5);
     cv::Point3d cam_pos( 0, -1.0, -1.0 ), cam_focal_point(0,0,0), cam_y_dir(0,1,0);
@@ -61,9 +62,19 @@ int main ( int argc, char** argv )
     for ( int i=0; i<rgb_files.size(); i++ )
     {
         Mat color = cv::imread ( rgb_files[i] );
-        Mat depth = cv::imread ( depth_files[i], -1 );
-        if ( color.data==nullptr || depth.data==nullptr )
+        if ( color.data == nullptr )
+        {
+            perror(" color imread");
             break;
+        }
+        Mat depth = cv::imread ( depth_files[i], -1 );
+        if (  depth.data == nullptr )
+        {
+            perror("depth imread");
+            break;
+        }
+
+        //依次创建帧，并且赋值
         myslam::Frame::Ptr pFrame = myslam::Frame::createFrame();
         pFrame->camera_ = camera;
         pFrame->color_ = color;
@@ -71,13 +82,18 @@ int main ( int argc, char** argv )
         pFrame->time_stamp_ = rgb_times[i];
 
         boost::timer timer;
+        //压入帧
         vo->addFrame ( pFrame );
         cout<<"VO costs time: "<<timer.elapsed()<<endl;
-        
+
+        //如果跟丢，则停止
         if ( vo->state_ == myslam::VisualOdometry::LOST )
+        {
+            std::cerr<<"LOST "<<endl;
             break;
+        }
+         //取出位姿
         SE3 Tcw = pFrame->T_c_w_.inverse();
-        
         // show the map and the camera pose 
         cv::Affine3d M(
             cv::Affine3d::Mat3( 
