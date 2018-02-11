@@ -1,5 +1,4 @@
 # 学习slam ，添加代码注释
-#
 # slambook
 This is the code written for my new book about visual SLAM. It will come in April 2017. I am reviewing the context and codes right now.
 
