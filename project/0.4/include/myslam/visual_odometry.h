@@ -38,17 +38,19 @@ public:
     };
     
     VOState     state_;     // current VO status
-    Map::Ptr    map_;       // map with all frames and map points
+
+    Map::Ptr    map_;       // map 类指针，map类为管理帧的类 map with all frames and map points
     
-    Frame::Ptr  ref_;       // reference key-frame 
-    Frame::Ptr  curr_;      // current frame 
+    Frame::Ptr  ref_;       // 参考帧，reference key-frame
+    Frame::Ptr  curr_;      // 当前帧，current frame
     
     cv::Ptr<cv::ORB> orb_;  // orb detector and computer 
-    vector<cv::KeyPoint>    keypoints_curr_;    // keypoints in current frame
+    vector<cv::KeyPoint>    keypoints_curr_;    // 当前帧的特征点 ，keypoints in current frame
     Mat                     descriptors_curr_;  // descriptor in current frame 
     
-    cv::FlannBasedMatcher   matcher_flann_;     // flann matcher
-    vector<MapPoint::Ptr>   match_3dpts_;       // matched 3d points 
+    cv::FlannBasedMatcher   matcher_flann_;     // 匹配类，用于调用匹配函数，flann matcher
+    vector<MapPoint::Ptr>   match_3dpts_;       // 匹配的3d特征点 matched 3d points
+
     vector<int>             match_2dkp_index_;  // matched 2d pixels (index of kp_curr)
    
     SE3 T_c_w_estimated_;    // the estimated pose of current frame 
@@ -70,7 +72,7 @@ public: // functions
     VisualOdometry();
     ~VisualOdometry();
     
-    bool addFrame( Frame::Ptr frame );      // add a new frame 
+    bool addFrame( Frame::Ptr frame );      // 添加一个新帧add a new frame
     
 protected:  
     // inner operation 

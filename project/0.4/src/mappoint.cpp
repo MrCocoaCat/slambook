@@ -29,19 +29,21 @@ MapPoint::MapPoint()
 
 }
 
+    //带参数的构造函数
 MapPoint::MapPoint ( long unsigned int id, const Vector3d& position, const Vector3d& norm, Frame* frame, const Mat& descriptor )
 : id_(id), pos_(position), norm_(norm), good_(true), visible_times_(1), matched_times_(1), descriptor_(descriptor)
 {
     observed_frames_.push_back(frame);
 }
-
+//通过createMapPoint 函数进行构造
 MapPoint::Ptr MapPoint::createMapPoint()
 {
+    //调用带参数的构造函数
     return MapPoint::Ptr( 
         new MapPoint( factory_id_++, Vector3d(0,0,0), Vector3d(0,0,0) )
     );
 }
-
+    //通过createMapPoint 的重载函数
 MapPoint::Ptr MapPoint::createMapPoint ( 
     const Vector3d& pos_world, 
     const Vector3d& norm, 

@@ -21,7 +21,7 @@
 
 namespace myslam
 {
-
+    //放入关键帧
 void Map::insertKeyFrame ( Frame::Ptr frame )
 {
     cout<<"Key frame size = "<<keyframes_.size()<<endl;
@@ -35,6 +35,7 @@ void Map::insertKeyFrame ( Frame::Ptr frame )
     }
 }
 
+    //向地图中添加帧
 void Map::insertMapPoint ( MapPoint::Ptr map_point )
 {
     if ( map_points_.find(map_point->id_) == map_points_.end() )

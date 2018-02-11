@@ -26,14 +26,18 @@ namespace myslam
 {
     
 class Frame;
+
+    //地图特征点
 class MapPoint
 {
 public:
     typedef shared_ptr<MapPoint> Ptr;
-    unsigned long      id_;        // ID
+    unsigned long      id_;        // 通过factory_id_ 进行赋值ID
+
+    //静态成员变量，属于该类，而不是成员，用于记录ID号
     static unsigned long factory_id_;    // factory id
     bool        good_;      // wheter a good point 
-    Vector3d    pos_;       // Position in world
+    Vector3d    pos_;       // 世界坐标 Position in world
     Vector3d    norm_;      // Normal of viewing direction 
     Mat         descriptor_; // Descriptor for matching 
     
@@ -43,6 +47,8 @@ public:
     int         visible_times_;     // being visible in current frame 
     
     MapPoint();
+
+    //带参数构造
     MapPoint( 
         unsigned long id, 
         const Vector3d& position, 
@@ -50,12 +56,16 @@ public:
         Frame* frame=nullptr, 
         const Mat& descriptor=Mat() 
     );
-    
-    inline cv::Point3f getPositionCV() const {
+    //内联函数，在编译时进行展开，
+    //const 修饰this 指针，不可以对该类的成员函数进行修改
+    inline cv::Point3f getPositionCV() const
+    {
         return cv::Point3f( pos_(0,0), pos_(1,0), pos_(2,0) );
     }
-    
+
+    //通过该函数进行构造
     static MapPoint::Ptr createMapPoint();
+    //重载函数，相同函数名不同参数列表
     static MapPoint::Ptr createMapPoint( 
         const Vector3d& pos_world, 
         const Vector3d& norm_,

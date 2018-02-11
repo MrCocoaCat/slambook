@@ -20,7 +20,7 @@ int main( int argc, char** argv )
     vector<Mat> images; 
     for ( int i=0; i<10; i++ )
     {
-        string path = "./data/"+to_string(i+1)+".png";
+        string path = "../data/"+to_string(i+1)+".png";
         images.push_back( imread(path) );
     }
     // detect ORB features

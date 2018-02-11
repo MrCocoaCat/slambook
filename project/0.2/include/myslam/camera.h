@@ -38,6 +38,7 @@ public:
     {}
 
     // coordinate transform: world, camera, pixel
+    //SE3为变换矩阵李群，4*4
     Vector3d world2camera( const Vector3d& p_w, const SE3& T_c_w );
     Vector3d camera2world( const Vector3d& p_c, const SE3& T_c_w );
     Vector2d camera2pixel( const Vector3d& p_c );

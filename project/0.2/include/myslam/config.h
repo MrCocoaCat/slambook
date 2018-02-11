@@ -27,8 +27,8 @@ namespace myslam
 class Config
 {
 private:
-    static std::shared_ptr<Config> config_; 
-    cv::FileStorage file_;
+    static std::shared_ptr<Config> config_; //该类的指针
+    cv::FileStorage file_; //存放读取的文件
     
     Config () {} // private constructor makes a singleton
 public:
@@ -39,7 +39,7 @@ public:
     
     // access the parameter values
     template< typename T >
-    static T get( const std::string& key )
+    static T get( const std::string& key ) //读取配置
     {
         return T( Config::config_->file_[key] );
     }

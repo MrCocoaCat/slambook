@@ -19,3 +19,7 @@ target_link_libraries( direct_method ${OpenCV_LIBS} ${Pangolin_LIBRARIES} ${Soph
 
 add_executable(optical_flow optical_flow.cpp)
 target_link_libraries( optical_flow ${OpenCV_LIBS} ${Sophus_LIBRARIES})
+
+
+add_executable(motionToColor motionToColor.cpp)
+target_link_libraries( motionToColor ${OpenCV_LIBS} )

@@ -7,6 +7,9 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/video/tracking.hpp>
+
+#include <opencv2/calib3d/calib3d.hpp>
+#include <opencv2/opencv.hpp>
 using namespace std;
 int main( int argc, char** argv )
 {
@@ -15,7 +18,9 @@ int main( int argc, char** argv )
         cout<<"usage: useLK path_to_dataset"<<endl;
         return 1;
     }
+
     string path_to_dataset = argv[1];
+
     string associate_file = path_to_dataset + "/associate.txt";
     
     ifstream fin( associate_file ); //读文件
@@ -96,7 +101,7 @@ int main( int argc, char** argv )
             cv::circle(img_show, kp, 2, cv::Scalar(0, 240, 0), 2);
         }
         cv::imshow("corners", img_show);
-        cv::waitKey(0);
+        cv::waitKey(200);
         last_color = color;
     }
     return 0;

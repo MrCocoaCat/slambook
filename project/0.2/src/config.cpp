@@ -30,6 +30,7 @@ void Config::setParameterFile( const std::string& filename )
     if ( config_->file_.isOpened() == false )
     {
         std::cerr<<"parameter file "<<filename<<" does not exist."<<std::endl;
+
         config_->file_.release();
         return;
     }
@@ -38,6 +39,7 @@ void Config::setParameterFile( const std::string& filename )
 Config::~Config()
 {
     if ( file_.isOpened() )
+        //存储或读取操作完成后，需要关闭文件并释放缓存
         file_.release();
 }
 

@@ -279,7 +279,7 @@ bool poseEstimationDirect ( const vector< Measurement >& measurements, cv::Mat* 
     int id=1;
     for ( Measurement m: measurements )
     {
-        EdgeSE3ProjectDirect* edge = new EdgeSE3ProjectDirect (
+        EdgeSE3ProjectDirect* edge = new EdgeSE3ProjectDirect(
             m.pos_world,
             K ( 0,0 ), K ( 1,1 ), K ( 0,2 ), K ( 1,2 ), gray
         );
