@@ -42,7 +42,7 @@ int main( int argc, char** argv )
             detector->detect( color, kps );
             for ( auto kp:kps )
             {
-                keypoints.push_back( kp.pt ); //将坐标放入keypoints链表中
+                keypoints.--( kp.pt ); //将坐标放入keypoints链表中
             }
             last_color = color;
             continue;

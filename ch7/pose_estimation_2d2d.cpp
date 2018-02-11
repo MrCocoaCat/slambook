@@ -182,3 +182,71 @@ void find_feature_matches ( const Mat& img_1, const Mat& img_2,
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void bfMatch(const vector<DescType> &desc1, const vector<DescType> &desc2, vector<cv::DMatch> &matches) {
+    int d_max = 50;
+
+    // START YOUR CODE HERE (~12 lines)
+    //cout<<desc1.size()<<endl;
+    cv::DMatch goodMatch={};
+    for(int i=0;i<desc1.size();i++)
+    {
+        int min[desc1.size()],q[desc1.size()];
+        min[i]=255;
+        q[i]=0;
+        int d[desc1.size()][desc2.size()];
+        int p=0;//记录min[i]对应的第一幅图的特征ID i
+        for (int j=0; j< desc2.size();j++)
+        {
+            d[i][j] = 0;//用来存储dij
+            //if((desc1[i].empty())||(desc2[j].empty()))
+              //  continue;
+            for (int k=0;k<256;k++)
+            {
+                if (((desc1[i][k]==0)&&(desc2[j][k]==1))|| ((desc1[i][k]==1)&&(desc2[j][k]==0)))
+                   d[i][j]=d[i][j]+1;
+                //d[i][j]+=(desc1[i][k]==desc2[j][k]?0:1);//i,j之间的汉明距离
+            }
+            if(d[i][j]<min[i]&&d[i][j]!=0) 
+			{
+                min[i] = d[i][j];//把i所对应的最小的距离放到d[i][j]中
+                p=i;             //用p来保存i
+                q[i]=j;          //
+            }
+        }
+        cout<<"q"<<i<<"="<<q[i]<<endl;
+        cout<<"min "<<i<<" "<<":"<<min[i]<<endl;
+        if(min[i]<=50&&min[i]!=0)//如果i所对应的最小距离不大于50
+        {
+            goodMatch.queryIdx = p;
+            goodMatch.trainIdx = q[i];
+            goodMatch.distance = min[i];
+            matches.push_back(goodMatch);
+        }
+    }
+    // find matches between desc1 and desc2.
+    // END YOUR CODE HERE
+
+

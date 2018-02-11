@@ -141,7 +141,7 @@ int main(int argc, char **argv)
     cv::imshow("tracked single level", img2_single);
     cv::imshow("tracked multi level", img2_multi);
     cv::imshow("tracked by opencv", img2_CV);
-/*    cv::imshow("这是昨天把握气得吐血的程序", img2_single);
+/*  cv::imshow("这是昨天把握气得吐血的程序", img2_single);
     cv::imshow("这个程序更难，但是我就2小时搞定了", img2_multi);
     cv::imshow("这是标准的程序，相当于经典的结果", img2_CV);*/
     cv::waitKey(0);
@@ -171,7 +171,7 @@ void OpticalFlowSingleLevel(
         double dx = 0, dy = 0; // dx,dy need to be estimated
         if (have_initial) //第一次计算为0，之后遍被初始化了
         {
-            dx = kp2[i].pt.x - kp.pt.x;
+            dx = kp2[i].pt.x - kp.pt.x;  //二者坐标差值
             dy = kp2[i].pt.y - kp.pt.y;
         }
 
@@ -201,9 +201,11 @@ void OpticalFlowSingleLevel(
 
                     // TODO START YOUR CODE HERE (~8 lines)
                     double error = 0;
+
                     double X = kp.pt.x +x;
                     double Y = kp.pt.y +y;
                     bool have_computed_J = false;
+                    //计算窗口内的灰度误差值
                     error =   - (GetPixelValue(img1,X,Y) - GetPixelValue(img2,X+dx,Y+dy)) ;
 //                    error = GetPixelValue(img1,X,Y) - GetPixelValue(img2,X+dx,Y+dy);
                     Eigen::Vector2d J;  // Jacobian
