@@ -25,8 +25,6 @@ int main(int argc, char **argv) {
     double t,tx,ty,tz,qx,qy,qz,qw;
     while(fin>>t>>tx>>ty>>tz>>qx>>qy>>qz>>qw)
     {
-
-
         //cout<<t<<" "<<tx<<" "<<ty<<" "<<tz<<" "<<qx<<" "<<qy<<" "<<qz<<" "<<qw<<endl;
         Eigen::Vector3d tt(tx,ty,tz);
         Eigen::Quaterniond q(qw,qx,qy,qz);//四元数
@@ -34,7 +32,6 @@ int main(int argc, char **argv) {
         Sophus::SE3 point(R,tt);
         poses.push_back(point);
     }
-
     // end your code here
     // draw trajectory in pangolin
     DrawTrajectory(poses);
