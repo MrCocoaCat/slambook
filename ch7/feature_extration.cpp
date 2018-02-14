@@ -37,9 +37,7 @@ int main ( int argc, char** argv )
     Mat outimg1;
     drawKeypoints( img_1, keypoints_1, outimg1, Scalar::all(-1), DrawMatchesFlags::DEFAULT );
     imshow("ORB",outimg1); //显示ORB 特征点
-
-
-
+    
     //-- 第三步:对两幅图像中的BRIEF描述子进行匹配，使用 Hamming 距离
     vector<DMatch> matches;
     //BFMatcher matcher ( NORM_HAMMING );
