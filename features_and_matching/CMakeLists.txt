@@ -17,7 +17,7 @@ find_package(OpenCV REQUIRED)
 # Print some message showing some of them
 message(STATUS "OpenCV library status:")
 message(STATUS "    version: ${OpenCV_VERSION}")
-message(STATUS "    libraries: ${OpenCV_LIBS}")
+#message(STATUS "    libraries: ${OpenCV_LIBS}")
 message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
 
 if(CMAKE_VERSION VERSION_LESS "2.8.11")
@@ -26,21 +26,19 @@ if(CMAKE_VERSION VERSION_LESS "2.8.11")
 endif()
 
 
-set(FUNCTIONS functions.h functions.cxx)
+set(FUNCTIONS functions.h functions.cpp)
 
 #设置源文件
-set(FEATURES_SRC_FILES features.cxx ${FUNCTIONS})
+set(FEATURES_SRC_FILES features.cpp ${FUNCTIONS})
 add_executable(feature_detection ${FEATURES_SRC_FILES})
 # 链接OpenCV库文件倒应用程序
 target_link_libraries(feature_detection ${OpenCV_LIBS})
 
 
-set(BFM_MATCHING_SRC_FILES bfm_matcher.cxx ${FUNCTIONS})
+set(BFM_MATCHING_SRC_FILES bfm_matcher.cpp ${FUNCTIONS})
 add_executable(bfm_matcher ${BFM_MATCHING_SRC_FILES})
 target_link_libraries(bfm_matcher ${OpenCV_LIBS})
 
-set(KNN_MATCHING_SRC_FILES knn_matcher.cxx ${FUNCTIONS})
+set(KNN_MATCHING_SRC_FILES knn_matcher.cpp ${FUNCTIONS})
 add_executable(knn_matcher ${KNN_MATCHING_SRC_FILES})
 target_link_libraries(knn_matcher ${OpenCV_LIBS})
-
-

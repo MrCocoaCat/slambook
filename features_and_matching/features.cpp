@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
   std::cout<<"image size: "<<img_src.rows<<" x "<< img_src.cols<<std::endl;
 
   // 为了更好的显示，对图像进行下采样处理
-  cv::resize(img_src, img_src, cv::Size(img_src.cols*0.2, img_src.rows*0.2), 0.5, 0.5);
+//  cv::resize(img_src, img_src, cv::Size(img_src.cols*0.2, img_src.rows*0.2), 0.5, 0.5);
 
   // 设置需要检测的特征点的个数
   int n_features=4000;
