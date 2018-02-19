@@ -8,7 +8,8 @@
 #include <iostream>
 
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+ {
 
     if (argc < 3) {
         std::cerr << "usage: bfm_matcher matching img1, img2" << std::endl;
@@ -108,7 +109,8 @@ int main(int argc, char* argv[]) {
 
     // 选择前百分之十的特征点进行homograpy检测
     int nth_element=std::max(int (0.1*n_features),500);
-    if(good_sift_matches.size()> nth_element){
+    if(good_sift_matches.size()> nth_element)
+	{
         std::nth_element(good_sift_matches.begin(), good_sift_matches.begin()+nth_element, good_sift_matches.end());
         good_sift_matches.erase(good_sift_matches.begin()+nth_element, good_sift_matches.end());
     }

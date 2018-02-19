@@ -31,11 +31,11 @@ int main(int argc, char* argv[]) {
   clock_t  time_begin=clock();
   // harris 角点检测
   cv::Ptr<cv::GFTTDetector> gftt_detector=cv::GFTTDetector::create(n_features /* maximum of number of keypoints 最大找到的特征点数量*/
-                                                                    ,0.01 /* quality level */
+                                                                    ,0.01 /* quality level 响应值阈值*/
                                                                     ,1   /* minimum distances between key points */
                                                                     ,3    /* block size 取窗口大小*/
                                                                     ,true /* use harris detector */
-                                                                    ,0.04 /* the value of k in C=det(H) -k trace(H)^2 系数*/
+                                                                    ,0.04 /* the value of k in C=det(H) -k trace(H)^2 角点准则公式系数*/
                                                                     );
 
   // harris 关键点
