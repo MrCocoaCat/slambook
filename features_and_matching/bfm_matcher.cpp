@@ -14,14 +14,16 @@
 int main(int argc, char* argv[])
 {
 
-    if(argc<3){
+    if(argc<3)
+    {
         std::cerr<<"usage: bfm_matcher matching img1, img2"<<std::endl;
         return -1;
     }
 
     // 加载第一幅图像
     cv::Mat img1=cv::imread(argv[1]);
-    if(!img1.data){
+    if(!img1.data)
+    {
         std::cerr<<"fail to load img1"<<std::endl;
         return -1;
     }
@@ -30,7 +32,8 @@ int main(int argc, char* argv[])
 
     // 加载第二幅图像
     cv::Mat img2=cv::imread(argv[2]);
-    if(!img2.data){
+    if(!img2.data)
+    {
         std::cerr<<"fail to load img2"<<std::endl;
         return -1;
     }

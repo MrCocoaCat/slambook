@@ -1,6 +1,4 @@
-//
-// Created by swayfreeda on 17-10-24.
-//
+
 #include "functions.h"
 
 bool refine_matches_via_homography(const std::vector<cv::KeyPoint> & keypts1
