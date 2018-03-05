@@ -4,7 +4,7 @@
 
 安装cmake-gui
    sudo apt-get install cmake-gui
-编译OpenCV
+编译OpenC
    cd OpenCV_Base_PATH
    mkdir build
    cd build
