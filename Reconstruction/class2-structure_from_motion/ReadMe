@@ -1,0 +1,25 @@
+1.下载并编译安装OpenCV3.2
+2.下载针对OpenCV3.2版本的 opencv_contrib-3.2.0(原因是sift特征点的检测需要用到OpenCV的non-free模块)
+3.解压OpenCV3.2到OpenCV_Base_PATH,解压opencv_contrib-3.2.0，并将奇移动到OpenCV_Base_PATH目录下
+安装cmake-gui
+   sudo apt-get install cmake-gui 
+编译OpenCV
+   cd OpenCV_Base_PATH
+   mkdir build
+   cd build
+   cmake-gui ..
+   将在界面中找到OPENCV_ENABLE_NONFREE变量，并勾选
+   在界面中找到OPENCV_EXTRA_MODULES_PATH变量，并设置成opencv_contrib-3.2.0所在的文件夹
+   点击configure
+   点击generate
+ 执行 make 
+ 执行 sudo make install
+ 完成OpenCV安装
+
+
+下载features_and_matching.tar.gz并编译代码
+  cd features_and_matching
+  mkdir build
+  cd build 
+  cmake ..
+  make
